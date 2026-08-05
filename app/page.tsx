@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function HomePage() {
@@ -36,12 +35,14 @@ export default async function HomePage() {
                 style={{ background: p.image_bg }}
               >
                 {p.images?.[0] ? (
+                  // Real uploaded photo — used whenever one exists
                   <img
                     src={p.images[0]}
                     alt={p.name}
                     className="w-full h-full object-cover"
                   />
                 ) : (
+                  // Falls back to the old placeholder icon only if no photo has been uploaded yet
                   <div className="w-full h-full flex items-center justify-center">
                     <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.4" className="w-14 h-14">
                       <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
