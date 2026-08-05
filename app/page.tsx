@@ -35,6 +35,50 @@ export default async function HomePage() {
   return (
     <>
       <div>
+
+        {/* HERO PHOTO / VIDEO */}
+        <section className="px-12 pb-24">
+          <div className="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-bgElev flex items-center justify-center">
+            {hero.media_url ? (
+              hero.media_type === "video" ? (
+                <video
+                  src={hero.media_url}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              ) : (
+                <img
+                  src={hero.media_url}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              )
+            ) : (
+              <div className="text-center text-sand">
+                <svg
+                  viewBox="0 0 100 100"
+                  fill="none"
+                  stroke="#A79C86"
+                  strokeWidth="1"
+                  className="w-16 h-16 mx-auto mb-3"
+                >
+                  <rect x="15" y="25" width="70" height="50" rx="2" />
+                  <circle cx="35" cy="42" r="6" />
+                  <path d="M15 65 L38 48 L55 60 L70 45 L85 60" />
+                </svg>
+
+                <p className="font-mono text-xs">
+                  Hero photo/video goes here — add it in Admin → Homepage
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+      
         {/* Hero Text */}
         <section className="px-12 pt-20 pb-12">
           <div className="eyebrow mb-4">SS26 — Collection No. 04</div>
@@ -127,49 +171,6 @@ export default async function HomePage() {
         
          {/* TRUST STRIP */}
         <TrustStrip />
-        
-        {/* HERO PHOTO / VIDEO */}
-        <section className="px-12 pb-24">
-          <div className="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-bgElev flex items-center justify-center">
-            {hero.media_url ? (
-              hero.media_type === "video" ? (
-                <video
-                  src={hero.media_url}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                />
-              ) : (
-                <img
-                  src={hero.media_url}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              )
-            ) : (
-              <div className="text-center text-sand">
-                <svg
-                  viewBox="0 0 100 100"
-                  fill="none"
-                  stroke="#A79C86"
-                  strokeWidth="1"
-                  className="w-16 h-16 mx-auto mb-3"
-                >
-                  <rect x="15" y="25" width="70" height="50" rx="2" />
-                  <circle cx="35" cy="42" r="6" />
-                  <path d="M15 65 L38 48 L55 60 L70 45 L85 60" />
-                </svg>
-
-                <p className="font-mono text-xs">
-                  Hero photo/video goes here — add it in Admin → Homepage
-                </p>
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
 
       <Footer />
     </>
