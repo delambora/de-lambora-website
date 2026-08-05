@@ -10,6 +10,7 @@ export type CartItem = {
   size: string;
   qty: number;
   imageBg: string;
+  image?: string | null;
 };
 
 type CartContextType = {
