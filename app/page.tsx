@@ -34,11 +34,11 @@ export default async function HomePage() {
 
   return (
     <>
-      <div>
+      <main>
 
         {/* HERO PHOTO / VIDEO */}
-        <section className="px-12 pb-24">
-          <div className="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-bgElev flex items-center justify-center">
+        <section className="px-12 pt-8 pb-12">
+          <div className="h-[380px] md:h-[560px] w-full overflow-hidden rounded-sm bg-bgElev flex items-center justify-center">
             {hero.media_url ? (
               hero.media_type === "video" ? (
                 <video
@@ -61,7 +61,7 @@ export default async function HomePage() {
                 <svg
                   viewBox="0 0 100 100"
                   fill="none"
-                  stroke="#A79C86"
+                  stroke="currentColor"
                   strokeWidth="1"
                   className="w-16 h-16 mx-auto mb-3"
                 >
@@ -77,13 +77,12 @@ export default async function HomePage() {
             )}
           </div>
         </section>
-      </div>
-      
-        {/* Hero Text */}
-        <section className="px-12 pt-20 pb-12">
+
+        {/* HERO TEXT */}
+        <section className="px-12 pt-6 pb-16">
           <div className="eyebrow mb-4">SS26 — Collection No. 04</div>
 
-          <h1 className="font-serif text-5xl md:text-6xl font-light leading-tight max-w-2xl">
+          <h1 className="font-serif text-5xl md:text-6xl font-light leading-tight max-w-xl">
             {hero.headline_line1}
             <br />
             <em className="italic font-normal text-wineLight">
@@ -97,7 +96,7 @@ export default async function HomePage() {
 
           <a
             href="#new-arrivals"
-            className="inline-block mt-7 bg-wine hover:bg-wineDeep px-8 py-3.5 text-sm tracking-wide"
+            className="inline-block mt-8 bg-wine hover:bg-wineDeep px-8 py-3.5 text-sm tracking-wide transition-colors"
           >
             {hero.cta_text}
           </a>
@@ -113,7 +112,7 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-7">
             {(products ?? []).map((p: any) => (
-              <Link key={p.id} href={`/products/${p.slug}`} className="block">
+              <Link key={p.id} href={`/products/${p.slug}`} className="block group">
                 <div
                   className="aspect-[3/4] mb-3.5 overflow-hidden"
                   style={{ background: p.image_bg }}
@@ -122,16 +121,16 @@ export default async function HomePage() {
                     <img
                       src={p.images[0]}
                       alt={p.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <svg
                         viewBox="0 0 100 100"
                         fill="none"
-                        stroke="#F3EEE3"
+                        stroke="currentColor"
                         strokeWidth="1.4"
-                        className="w-14 h-14"
+                        className="w-14 h-14 text-sand"
                       >
                         <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
                       </svg>
@@ -161,16 +160,19 @@ export default async function HomePage() {
           </div>
 
           {(!products || products.length === 0) && (
-            <p className="text-sand text-sm">
+            <p className="text-sand text-sm mt-8">
               No products yet — add some in the admin panel.
             </p>
           )}
         </section>
 
-        <PromoBanner />
-        
-         {/* TRUST STRIP */}
+        {/* TRUST STRIP */}
         <TrustStrip />
+
+        {/* PROMO BANNER */}
+        <PromoBanner />
+
+      </main>
 
       <Footer />
     </>
