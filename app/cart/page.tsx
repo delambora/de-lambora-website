@@ -36,3 +36,48 @@ export default function CartPage() {
               <div className="font-mono text-xs text-sand mb-2.5">
                 {item.color.toUpperCase()} · SIZE {item.size}
               </div>
+              <div className="flex items-center border border-hairline w-fit">
+                <button onClick={() => setQty(i, item.qty - 1)} className="w-8 h-8">−</button>
+                <span className="w-8 text-center font-mono text-sm">{item.qty}</span>
+                <button onClick={() => setQty(i, item.qty + 1)} className="w-8 h-8">+</button>
+              </div>
+            </div>
+            <div className="text-right flex flex-col justify-between items-end">
+              <div className="font-mono text-sm">
+                ₹{(item.price * item.qty).toLocaleString("en-IN")}
+              </div>
+              <button
+                onClick={() => removeItem(i)}
+                className="text-xs font-mono text-sand hover:text-wineLight"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {items.length > 0 && (
+        <div className="bg-bgElev p-7">
+          <div className="eyebrow mb-4">Order summary</div>
+          <div className="flex justify-between text-sm text-sand py-2">
+            <span>Subtotal</span>
+            <span>₹{subtotal.toLocaleString("en-IN")}</span>
+          </div>
+          <div className="flex justify-between text-sm text-sand py-2">
+            <span>Shipping</span>
+            <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
+          </div>
+          <div className="flex justify-between text-base font-mono border-t border-hairline mt-2 pt-4">
+            <span>Total</span>
+            <span>₹{total.toLocaleString("en-IN")}</span>
+          </div>
+          <Link href="/checkout">
+            <button className="w-full bg-wine hover:bg-wineDeep py-4 text-sm tracking-wide mt-6">
+              Checkout →
+            </button>
+          </Link>
+        </div>
+      )}
+    </div>
+  );
+}
