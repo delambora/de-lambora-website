@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function HomePage() {
@@ -31,12 +32,22 @@ export default async function HomePage() {
           {(products ?? []).map((p: any) => (
             <Link key={p.id} href={`/products/${p.slug}`} className="block">
               <div
-                className="aspect-[3/4] flex items-center justify-center mb-3.5"
+                className="aspect-[3/4] mb-3.5 overflow-hidden"
                 style={{ background: p.image_bg }}
               >
-                <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.4" className="w-14 h-14">
-                  <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
-                </svg>
+                {p.images?.[0] ? (
+                  <img
+                    src={p.images[0]}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.4" className="w-14 h-14">
+                      <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
+                    </svg>
+                  </div>
+                )}
               </div>
               <div className="font-serif text-base mb-1">{p.name}</div>
               <div className="font-mono text-sm text-sand">₹{Number(p.price).toLocaleString("en-IN")}</div>
