@@ -34,7 +34,6 @@ export default async function HomePage() {
 
   return (
     <>
-      <div>
 
         {/* HERO PHOTO / VIDEO */}
         <section className="px-12 pb-24">
