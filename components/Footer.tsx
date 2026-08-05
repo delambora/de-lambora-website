@@ -45,7 +45,7 @@ export default function Footer() {
           <ul className="space-y-2 text-sm text-sand">
             <li>
               <a
-                href="https://instagram.com/delambora"
+                href="https://instagram.com/de.lambora"
                 target="_blank"
                 rel="noopener noreferrer"
               >
