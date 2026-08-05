@@ -7,9 +7,11 @@ import { useCart } from "@/lib/cart-context";
 export default function ProductDetail({ product }: { product: any }) {
   const colors = product.colors ?? [];
   const sizes = product.sizes ?? [];
+  const images = product.images ?? [];
   const [color, setColor] = useState(colors[0]?.name ?? "");
   const [size, setSize] = useState(sizes[Math.floor(sizes.length / 2)] ?? "");
   const [qty, setQty] = useState(1);
+  const [activeImage, setActiveImage] = useState(0);
   const { addItem } = useCart();
   const router = useRouter();
 
@@ -29,16 +31,43 @@ export default function ProductDetail({ product }: { product: any }) {
   return (
     <div className="grid md:grid-cols-2 gap-16 px-12 py-10">
       <div>
+        {/* Main image */}
         <div
-          className="aspect-[4/5] flex items-center justify-center"
+          className="aspect-[4/5] flex items-center justify-center overflow-hidden mb-3"
           style={{ background: product.image_bg }}
         >
-          <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.2" className="w-2/5 h-2/5">
-            <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
-            <path d="M42 27 L25 34 L28 44 L42 38" />
-            <path d="M58 27 L75 34 L72 44 L58 38" />
-          </svg>
+          {images.length > 0 ? (
+            <img
+              src={images[activeImage]}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            // Falls back to the old placeholder icon only if no photos have been uploaded yet
+            <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.2" className="w-2/5 h-2/5">
+              <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
+              <path d="M42 27 L25 34 L28 44 L42 38" />
+              <path d="M58 27 L75 34 L72 44 L58 38" />
+            </svg>
+          )}
         </div>
+
+        {/* Thumbnail strip — only shows if there's more than one photo */}
+        {images.length > 1 && (
+          <div className="flex gap-2.5">
+            {images.map((url: string, i: number) => (
+              <button
+                key={url}
+                onClick={() => setActiveImage(i)}
+                className={`w-16 h-20 flex-shrink-0 overflow-hidden border ${
+                  activeImage === i ? "border-wineLight" : "border-hairline"
+                }`}
+              >
+                <img src={url} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div>
