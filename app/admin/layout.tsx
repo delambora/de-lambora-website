@@ -10,8 +10,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const adminEmail = process.env.ADMIN_EMAIL;
 
-  // Only the account whose email matches ADMIN_EMAIL (set in your env vars)
-  // can see anything under /admin. Everyone else gets sent to login.
   if (!user || !adminEmail || user.email !== adminEmail) {
     redirect("/login?next=/admin");
   }
@@ -26,6 +24,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </Link>
           <Link href="/admin/products/new" className="text-sand hover:text-bone">
             + New product
+          </Link>
+          <Link href="/admin/homepage" className="text-sand hover:text-bone">
+            Homepage
           </Link>
           <Link href="/" className="text-sand hover:text-bone">
             View site
