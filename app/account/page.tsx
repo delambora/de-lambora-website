@@ -1,78 +1,76 @@
-"use client";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+export const revalidate = 0;
 
-export default function AccountPage() {
+export default async function HomePage() {
   const supabase = createClient();
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) {
-        router.push("/login?next=/account");
-        return;
-      }
-      setUser(data.user);
-
-      const { data: orderData } = await supabase
-        .from("orders")
-        .select("*, order_items(*)")
-        .order("created_at", { ascending: false });
-
-      setOrders(orderData ?? []);
-      setLoading(false);
-    });
-  }, []);
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
-  }
-
-  if (loading) return null;
+  const { data: products } = await supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   return (
-    <div className="px-12 py-16 max-w-2xl">
-      <div className="flex items-center justify-between mb-10">
-        <div>
-          <div className="eyebrow mb-2">Account</div>
-          <h1 className="font-serif text-3xl font-light">{user?.user_metadata?.full_name || user?.email}</h1>
-        </div>
-        <button onClick={handleLogout} className="text-xs font-mono text-sand hover:text-wineLight">
-          Sign out
-        </button>
-      </div>
+    <div>
+      <section className="px-12 pt-24 pb-16">
+        <div className="eyebrow mb-4">SS26 — Collection No. 04</div>
+        <h1 className="font-serif text-5xl md:text-6xl font-light leading-tight max-w-2xl">
+          Tailored for<br />
+          the <em className="italic font-normal text-wineLight">unhurried</em>.
+        </h1>
+        <p className="mt-5 max-w-md text-sand text-sm leading-relaxed">
+          Cloth cut with intention. Small runs, natural fibers, made to be worn for years rather than seasons.
+        </p>
+      </section>
 
-      <h2 className="font-serif text-xl font-light mb-5">Order history</h2>
+      <section className="px-12 pb-24">
+        <div className="eyebrow mb-2">Just in</div>
+        <h2 className="font-serif text-2xl font-light mb-9">New arrivals</h2>
 
-      {orders.length === 0 && <p className="text-sand text-sm">No orders yet.</p>}
-
-      {orders.map((order) => (
-        <div key={order.id} className="border-b border-hairline py-5">
-          <div className="flex justify-between text-sm mb-3">
-            <span className="font-mono text-sand">
-              {new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
-            </span>
-            <span className="font-mono uppercase text-xs text-sand">{order.status}</span>
-          </div>
-          {order.order_items?.map((item: any) => (
-            <div key={item.id} className="flex justify-between text-sm py-1">
-              <span>{item.product_name} <span className="text-sand">({item.color}, {item.size}) × {item.qty}</span></span>
-              <span className="font-mono">₹{Number(item.price * item.qty).toLocaleString("en-IN")}</span>
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-7">
+          {(products ?? []).map((p: any) => (
+            <Link key={p.id} href={`/products/${p.slug}`} className="block">
+              <div
+                className="aspect-[3/4] mb-3.5 overflow-hidden"
+                style={{ background: p.image_bg }}
+              >
+                {p.images?.[0] ? (
+                  // Real uploaded photo — used whenever one exists
+                  <img
+                    src={p.images[0]}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  // Falls back to the old placeholder icon only if no photo has been uploaded yet
+                  <div className="w-full h-full flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.4" className="w-14 h-14">
+                      <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="font-serif text-base mb-1">{p.name}</div>
+              <div className="font-mono text-sm text-sand">₹{Number(p.price).toLocaleString("en-IN")}</div>
+              <div className="flex gap-1.5 mt-2">
+                {(p.colors ?? []).map((c: any, i: number) => (
+                  <span
+                    key={i}
+                    className="w-3 h-3 rounded-full border border-hairline"
+                    style={{ background: c.hex }}
+                  />
+                ))}
+              </div>
+            </Link>
           ))}
-          <div className="flex justify-between text-sm font-mono mt-3 pt-3 border-t border-hairline">
-            <span>Total</span>
-            <span>₹{Number(order.total).toLocaleString("en-IN")}</span>
-          </div>
         </div>
-      ))}
+
+        {(!products || products.length === 0) && (
+          <p className="text-sand text-sm">
+            No products yet — add some in Supabase (Table editor → products), or run supabase/schema.sql which includes sample products.
+          </p>
+        )}
+      </section>
     </div>
   );
 }
