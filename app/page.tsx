@@ -31,50 +31,21 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* HERO */}
-      <section className="relative">
-        <div className="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-bgElev flex items-center justify-center">
-          {hero.media_url ? (
-            hero.media_type === "video" ? (
-              <video
-                src={hero.media_url}
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
-            ) : (
-              <img src={hero.media_url} alt="" className="w-full h-full object-cover" />
-            )
-          ) : (
-            // Placeholder until a real photo/video is uploaded in /admin/homepage
-            <div className="text-center text-sand">
-              <svg viewBox="0 0 100 100" fill="none" stroke="#A79C86" strokeWidth="1" className="w-16 h-16 mx-auto mb-3">
-                <rect x="15" y="25" width="70" height="50" rx="2" />
-                <circle cx="35" cy="42" r="6" />
-                <path d="M15 65 L38 48 L55 60 L70 45 L85 60" />
-              </svg>
-              <p className="font-mono text-xs">Hero photo/video goes here — add it in Admin → Homepage</p>
-            </div>
-          )}
-        </div>
-
-        <div className="px-12 pt-16 pb-16">
-          <div className="eyebrow mb-4">SS26 — Collection No. 04</div>
-          <h1 className="font-serif text-5xl md:text-6xl font-light leading-tight max-w-2xl">
-            {hero.headline_line1}
-            <br />
-            <em className="italic font-normal text-wineLight">{hero.headline_emphasis}</em>
-          </h1>
-          <p className="mt-5 max-w-md text-sand text-sm leading-relaxed">{hero.subtext}</p>
-          <a
-            href={hero.cta_link}
-            className="inline-block mt-7 bg-wine hover:bg-wineDeep px-8 py-3.5 text-sm tracking-wide"
-          >
-            {hero.cta_text}
-          </a>
-        </div>
+      {/* Simple text intro up top, since the big photo/video now lives lower down */}
+      <section className="px-12 pt-20 pb-12">
+        <div className="eyebrow mb-4">SS26 — Collection No. 04</div>
+        <h1 className="font-serif text-5xl md:text-6xl font-light leading-tight max-w-2xl">
+          {hero.headline_line1}
+          <br />
+          <em className="italic font-normal text-wineLight">{hero.headline_emphasis}</em>
+        </h1>
+        <p className="mt-5 max-w-md text-sand text-sm leading-relaxed">{hero.subtext}</p>
+        <a
+          href="#new-arrivals"
+          className="inline-block mt-7 bg-wine hover:bg-wineDeep px-8 py-3.5 text-sm tracking-wide"
+        >
+          {hero.cta_text}
+        </a>
       </section>
 
       {/* NEW ARRIVALS */}
@@ -115,10 +86,37 @@ export default async function HomePage() {
         </div>
 
         {(!products || products.length === 0) && (
-          <p className="text-sand text-sm">
-            No products yet — add some in the admin panel.
-          </p>
+          <p className="text-sand text-sm">No products yet — add some in the admin panel.</p>
         )}
+      </section>
+
+      {/* HERO PHOTO/VIDEO — now at the bottom of the homepage */}
+      <section className="px-12 pb-24">
+        <div className="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-bgElev flex items-center justify-center">
+          {hero.media_url ? (
+            hero.media_type === "video" ? (
+              <video
+                src={hero.media_url}
+                className="w-full h-full object-cover"
+                autoPlay
+                muted
+                loop
+                playsInline
+              />
+            ) : (
+              <img src={hero.media_url} alt="" className="w-full h-full object-cover" />
+            )
+          ) : (
+            <div className="text-center text-sand">
+              <svg viewBox="0 0 100 100" fill="none" stroke="#A79C86" strokeWidth="1" className="w-16 h-16 mx-auto mb-3">
+                <rect x="15" y="25" width="70" height="50" rx="2" />
+                <circle cx="35" cy="42" r="6" />
+                <path d="M15 65 L38 48 L55 60 L70 45 L85 60" />
+              </svg>
+              <p className="font-mono text-xs">Hero photo/video goes here — add it in Admin → Homepage</p>
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );
