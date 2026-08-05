@@ -1,5 +1,5 @@
-import TrustStrip from "@/components/TrustStrip";
 import PromoBanner from "@/components/PromoBanner";
+import TrustStrip from "@/components/TrustStrip";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
@@ -124,10 +124,10 @@ export default async function HomePage() {
         </section>
 
         {/* TRUST STRIP */}
+        <PromoBanner />
+        
         <TrustStrip />
         
-        <PromoBanner />
-
         {/* HERO PHOTO / VIDEO */}
         <section className="px-12 pb-24">
           <div className="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-bgElev flex items-center justify-center">
