@@ -123,9 +123,9 @@ export default async function HomePage() {
           )}
         </section>
 
-        {/* TRUST STRIP */}
         <PromoBanner />
         
+         {/* TRUST STRIP */}
         <TrustStrip />
         
         {/* HERO PHOTO / VIDEO */}
