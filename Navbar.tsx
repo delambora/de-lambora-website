@@ -7,15 +7,20 @@ export default function Navbar() {
   const { items } = useCart();
   const count = items.reduce((sum, i) => sum + i.qty, 0);
 
+  const marqueeText =
+    "Free shipping over ₹3000 · COD available · New drop: SS26 · 7-day easy returns · ";
+
   return (
     <nav className="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-hairline">
-      {/* Top utility strip */}
-      <div className="text-center py-2 text-xs font-mono tracking-wide text-sand border-b border-hairline">
-        Free shipping over ₹3000 · COD available
+      {/* Scrolling marquee strip */}
+      <div className="overflow-hidden py-2 border-b border-hairline">
+        <div className="marquee-track flex whitespace-nowrap font-mono text-xs tracking-wide text-sand">
+          <span className="px-4">{marqueeText.repeat(4)}</span>
+          <span className="px-4" aria-hidden="true">{marqueeText.repeat(4)}</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-3 items-center px-12 py-5">
-        {/* Left: account + bag */}
         <div className="flex items-center gap-6 text-sm">
           <Link href="/account" className="hover:text-wineLight">Account</Link>
           <Link href="/cart" className="hover:text-wineLight">
@@ -28,16 +33,13 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Center: logo */}
         <Link href="/" className="font-serif text-xl tracking-wide text-center">
           DE LAMBORA
         </Link>
 
-        {/* Right: spacer to balance the grid so logo stays centered */}
         <div />
       </div>
 
-      {/* Category nav row */}
       <div className="hidden md:flex justify-center gap-8 text-sm text-sand pb-4">
         <Link href="/collections/new" className="hover:text-bone">New</Link>
         <Link href="/collections/shirts" className="hover:text-bone">Shirts</Link>
