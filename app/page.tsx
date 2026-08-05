@@ -124,6 +124,8 @@ export default async function HomePage() {
 
         {/* TRUST STRIP */}
         <TrustStrip />
+        
+        <PromoBanner />
 
         {/* HERO PHOTO / VIDEO */}
         <section className="px-12 pb-24">
