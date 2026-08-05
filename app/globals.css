@@ -22,3 +22,17 @@ body {
   border-bottom: 1px dotted rgba(243,238,227,0.14);
   transform: translateY(-4px);
 }
+
+.marquee-track {
+  animation: marquee-scroll 22s linear infinite;
+  width: max-content;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
