@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { updateHero } from "./homepage-actions";
+import { updateHero } from "../homepage-actions";
 
 const inputClass =
   "w-full bg-transparent border border-hairline px-3 py-3 text-sm focus:outline-none focus:border-wineLight";
