@@ -1,4 +1,5 @@
 import TrustStrip from "@/components/TrustStrip";
+import PromoBanner from "@/components/PromoBanner";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
