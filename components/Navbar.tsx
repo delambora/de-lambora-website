@@ -29,7 +29,7 @@ export default function Navbar() {
       <div className="grid grid-cols-3 items-center px-12 py-5">
 
         {/* LEFT */}
-        <div className="flex items-center">
+        <div className="flex justify-start">
           <Link href="/" className="flex items-center gap-3">
 
             <Image
@@ -40,8 +40,8 @@ export default function Navbar() {
               priority
             />
 
-            <span className="font-serif text-2xl tracking-wide">
-              De Lambora
+            <span className="font-serif text-xl tracking-wide uppercase">
+              DE LAMBORA
             </span>
 
           </Link>
@@ -51,17 +51,16 @@ export default function Navbar() {
         <div />
 
         {/* RIGHT */}
-        <div className="flex justify-end items-center gap-6">
+        <div className="flex justify-end items-center gap-8 text-sm">
 
           {/* Account */}
           <Link
             href="/account"
-            className="hover:text-wine transition-colors"
-            aria-label="Account"
+            className="flex items-center gap-2 hover:text-wine transition-colors"
           >
             <svg
-              width="22"
-              height="22"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -72,17 +71,18 @@ export default function Navbar() {
               <circle cx="12" cy="8" r="4" />
               <path d="M4 20c1.8-3.6 5-5.5 8-5.5s6.2 1.9 8 5.5" />
             </svg>
+
+            <span>Log in / Sign up</span>
           </Link>
 
           {/* Bag */}
           <Link
             href="/cart"
-            className="relative hover:text-wine transition-colors"
-            aria-label="Shopping Bag"
+            className="relative flex items-center gap-2 hover:text-wine transition-colors"
           >
             <svg
-              width="22"
-              height="22"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -94,8 +94,10 @@ export default function Navbar() {
               <path d="M9 7a3 3 0 0 1 6 0" />
             </svg>
 
+            <span>Bag</span>
+
             {count > 0 && (
-              <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-wine text-white text-[10px] font-medium">
+              <span className="absolute -top-2 left-4 flex h-5 w-5 items-center justify-center rounded-full bg-wine text-white text-[10px] font-medium">
                 {count}
               </span>
             )}
