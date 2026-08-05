@@ -1,161 +1,64 @@
-"use client";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useCart } from "@/lib/cart-context";
+export const revalidate = 0;
 
-export default function ProductDetail({ product }: { product: any }) {
-  const colors = product.colors ?? [];
-  const sizes = product.sizes ?? [];
-  const images = product.images ?? [];
-  const [color, setColor] = useState(colors[0]?.name ?? "");
-  const [size, setSize] = useState(sizes[Math.floor(sizes.length / 2)] ?? "");
-  const [qty, setQty] = useState(1);
-  const [activeImage, setActiveImage] = useState(0);
-  const { addItem } = useCart();
-  const router = useRouter();
-
-  function handleAddToBag() {
-    addItem({
-      productId: product.id,
-      name: product.name,
-      price: Number(product.price),
-      color,
-      size,
-      qty,
-      imageBg: product.image_bg
-    });
-    router.push("/cart");
-  }
+export default async function HomePage() {
+  const supabase = createClient();
+  const { data: products } = await supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   return (
-    <div className="grid md:grid-cols-2 gap-16 px-12 py-10">
-      <div>
-        {/* Main image */}
-        <div
-          className="aspect-[4/5] flex items-center justify-center overflow-hidden mb-3"
-          style={{ background: product.image_bg }}
-        >
-          {images.length > 0 ? (
-            <img
-              src={images[activeImage]}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            // Falls back to the old placeholder icon only if no photos have been uploaded yet
-            <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.2" className="w-2/5 h-2/5">
-              <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
-              <path d="M42 27 L25 34 L28 44 L42 38" />
-              <path d="M58 27 L75 34 L72 44 L58 38" />
-            </svg>
-          )}
+    <div>
+      <section className="px-12 pt-24 pb-16">
+        <div className="eyebrow mb-4">SS26 — Collection No. 04</div>
+        <h1 className="font-serif text-5xl md:text-6xl font-light leading-tight max-w-2xl">
+          Tailored for<br />
+          the <em className="italic font-normal text-wineLight">unhurried</em>.
+        </h1>
+        <p className="mt-5 max-w-md text-sand text-sm leading-relaxed">
+          Cloth cut with intention. Small runs, natural fibers, made to be worn for years rather than seasons.
+        </p>
+      </section>
+
+      <section className="px-12 pb-24">
+        <div className="eyebrow mb-2">Just in</div>
+        <h2 className="font-serif text-2xl font-light mb-9">New arrivals</h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-7">
+          {(products ?? []).map((p: any) => (
+            <Link key={p.id} href={`/products/${p.slug}`} className="block">
+              <div
+                className="aspect-[3/4] flex items-center justify-center mb-3.5"
+                style={{ background: p.image_bg }}
+              >
+                <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.4" className="w-14 h-14">
+                  <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
+                </svg>
+              </div>
+              <div className="font-serif text-base mb-1">{p.name}</div>
+              <div className="font-mono text-sm text-sand">₹{Number(p.price).toLocaleString("en-IN")}</div>
+              <div className="flex gap-1.5 mt-2">
+                {(p.colors ?? []).map((c: any, i: number) => (
+                  <span
+                    key={i}
+                    className="w-3 h-3 rounded-full border border-hairline"
+                    style={{ background: c.hex }}
+                  />
+                ))}
+              </div>
+            </Link>
+          ))}
         </div>
 
-        {/* Thumbnail strip — only shows if there's more than one photo */}
-        {images.length > 1 && (
-          <div className="flex gap-2.5">
-            {images.map((url: string, i: number) => (
-              <button
-                key={url}
-                onClick={() => setActiveImage(i)}
-                className={`w-16 h-20 flex-shrink-0 overflow-hidden border ${
-                  activeImage === i ? "border-wineLight" : "border-hairline"
-                }`}
-              >
-                <img src={url} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
-              </button>
-            ))}
-          </div>
+        {(!products || products.length === 0) && (
+          <p className="text-sand text-sm">
+            No products yet — add some in Supabase (Table editor → products), or run supabase/schema.sql which includes sample products.
+          </p>
         )}
-      </div>
-
-      <div>
-        <div className="eyebrow mb-2.5">{product.category}</div>
-        <h1 className="font-serif text-4xl font-light mb-2.5">{product.name}</h1>
-        <div className="font-mono text-lg text-wineLight mb-7">
-          ₹{Number(product.price).toLocaleString("en-IN")}
-        </div>
-
-        <div className="py-4 border-t border-b border-hairline mb-7 space-y-1.5">
-          <div className="flex items-baseline gap-2 text-sm">
-            <span className="font-mono text-sand whitespace-nowrap">Fabric</span>
-            <span className="leader" />
-            <span>{product.fabric}</span>
-          </div>
-          <div className="flex items-baseline gap-2 text-sm">
-            <span className="font-mono text-sand whitespace-nowrap">Fit</span>
-            <span className="leader" />
-            <span>{product.fit}</span>
-          </div>
-          <div className="flex items-baseline gap-2 text-sm">
-            <span className="font-mono text-sand whitespace-nowrap">Origin</span>
-            <span className="leader" />
-            <span>{product.origin}</span>
-          </div>
-        </div>
-
-        <div className="mb-7">
-          <div className="flex justify-between font-mono text-xs uppercase tracking-wider text-sand mb-3">
-            <span>Colour</span>
-            <span>{color}</span>
-          </div>
-          <div className="flex gap-3">
-            {colors.map((c: any) => (
-              <button
-                key={c.name}
-                onClick={() => setColor(c.name)}
-                style={{ background: c.hex }}
-                className={`w-8 h-8 rounded-full ${
-                  color === c.name ? "ring-2 ring-bone ring-offset-2 ring-offset-bg" : ""
-                }`}
-                aria-label={c.name}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-7">
-          <div className="font-mono text-xs uppercase tracking-wider text-sand mb-3">Size</div>
-          <div className="flex gap-2.5">
-            {sizes.map((s: string) => (
-              <button
-                key={s}
-                onClick={() => setSize(s)}
-                className={`w-11 h-10 flex items-center justify-center border font-mono text-xs ${
-                  size === s
-                    ? "border-wineLight bg-bgElev text-bone"
-                    : "border-hairline text-sand"
-                }`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4 mb-7">
-          <span className="font-mono text-xs uppercase tracking-wider text-sand">Qty</span>
-          <div className="flex items-center border border-hairline">
-            <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="w-8 h-9">
-              −
-            </button>
-            <span className="w-8 text-center font-mono text-sm">{qty}</span>
-            <button onClick={() => setQty((q) => q + 1)} className="w-8 h-9">
-              +
-            </button>
-          </div>
-        </div>
-
-        <button
-          onClick={handleAddToBag}
-          className="w-full bg-wine hover:bg-wineDeep py-4 text-sm tracking-wide mb-8"
-        >
-          Add to bag — ₹{(Number(product.price) * qty).toLocaleString("en-IN")}
-        </button>
-
-        <p className="text-sm text-sand leading-relaxed max-w-md">{product.description}</p>
-      </div>
+      </section>
     </div>
   );
 }
