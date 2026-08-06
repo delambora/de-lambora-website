@@ -34,7 +34,7 @@ export default function PromoBanner() {
             </p>
 
             <Link
-              href="/collections/new-arrivals"
+              href="/collections/new"
               className="inline-flex bg-white text-black px-8 py-3 text-sm tracking-wide hover:bg-neutral-200 transition"
             >
               Shop Now
