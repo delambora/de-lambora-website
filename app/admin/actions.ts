@@ -56,6 +56,8 @@ function readProductFields(formData: FormData) {
     .map((n, i) => ({ name: n, hex: colorHexes[i] }))
     .filter((c) => c.name);
 
+  const tags = formData.getAll("tags") as string[];
+
   return {
     name: String(formData.get("name") || ""),
     price: Number(formData.get("price") || 0),
@@ -69,7 +71,8 @@ function readProductFields(formData: FormData) {
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean),
-    colors
+    colors,
+    tags
   };
 }
 
