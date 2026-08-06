@@ -5,6 +5,9 @@ import { useState } from "react";
 const inputClass =
   "w-full bg-transparent border border-hairline px-3 py-3 text-sm focus:outline-none focus:border-wineLight";
 
+const CATEGORIES = ["Shirts", "Tees", "Polos", "Sweatshirts", "Hoodies"];
+const TAGS = ["bogo", "premium", "sale"];
+
 export default function ProductForm({
   action,
   product
@@ -56,11 +59,35 @@ export default function ProductForm({
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="eyebrow block mb-2">Category</label>
-          <input name="category" defaultValue={product?.category} className={inputClass} />
+          <select name="category" defaultValue={product?.category ?? CATEGORIES[0]} className={inputClass}>
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c} className="bg-bg">
+                {c}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="eyebrow block mb-2">Fabric</label>
           <input name="fabric" defaultValue={product?.fabric} className={inputClass} />
+        </div>
+      </div>
+
+      <div>
+        <label className="eyebrow block mb-2">Tags (controls which special collections it shows in)</label>
+        <div className="flex gap-5">
+          {TAGS.map((tag) => (
+            <label key={tag} className="flex items-center gap-2 text-sm capitalize">
+              <input
+                type="checkbox"
+                name="tags"
+                value={tag}
+                defaultChecked={product?.tags?.includes(tag)}
+                className="accent-wine"
+              />
+              {tag}
+            </label>
+          ))}
         </div>
       </div>
 
