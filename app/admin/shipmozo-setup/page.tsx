@@ -3,11 +3,17 @@ import { setupWarehouse } from "./shipmozo-setup-actions";
 export default function ShipmozoSetupPage({
   searchParams
 }: {
-  searchParams: { warehouse_id?: string };
+  searchParams: { warehouse_id?: string; error?: string };
 }) {
   return (
     <div>
       <h1 className="font-serif text-3xl font-light mb-8">ShipMozo setup</h1>
+
+      {searchParams.error && (
+        <div className="max-w-lg border border-wineLight text-wineLight text-sm px-4 py-3 mb-6">
+          ShipMozo said: {searchParams.error}
+        </div>
+      )}
 
       {searchParams.warehouse_id ? (
         <div className="max-w-lg">
@@ -20,8 +26,7 @@ export default function ShipmozoSetupPage({
           </div>
           <p className="text-sm text-sand leading-relaxed">
             Copy this value, then add it in Vercel → Settings → Environment Variables as{" "}
-            <code className="text-bone">SHIPMOZO_WAREHOUSE_ID</code>, and redeploy. This page
-            is a one-time setup tool — you won't need to run it again.
+            <code className="text-bone">SHIPMOZO_WAREHOUSE_ID</code>, and redeploy.
           </p>
         </div>
       ) : (
