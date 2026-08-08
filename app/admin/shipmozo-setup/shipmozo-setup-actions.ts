@@ -22,7 +22,7 @@ export async function setupWarehouse() {
 
   try {
     const result = await createWarehouse({
-      address_title: "De Lambora - Bagayam",
+      address_title: "De Lambora Bagayam",
       name: "De Lambora",
       address_line_one: "No.71, Vaanavil Nagar, Vairamuthu Street",
       address_line_two: "Bagayam",
