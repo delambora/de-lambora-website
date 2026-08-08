@@ -25,6 +25,7 @@ export async function setupWarehouse() {
   address_title: "De Lambora Bagayam",
   name: "De Lambora",
   phone: 7708920031,
+  email: "info@delambora.com",
   address_line_one: "No.71, Vaanavil Nagar, Vairamuthu Street",
   address_line_two: "Bagayam",
   pin_code: 632002
