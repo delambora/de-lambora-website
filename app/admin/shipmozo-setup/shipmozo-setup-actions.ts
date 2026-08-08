@@ -18,13 +18,20 @@ async function assertAdmin() {
 export async function setupWarehouse() {
   await assertAdmin();
 
-  const result = await createWarehouse({
-    address_title: "De Lambora - Bagayam",
-    name: "De Lambora",
-    address_line_one: "No.71, Vaanavil Nagar, Vairamuthu Street",
-    address_line_two: "Bagayam",
-    pin_code: 632002
-  });
+  let warehouseId: string;
 
-  redirect(`/admin/shipmozo-setup?warehouse_id=${encodeURIComponent(result.warehouse_id)}`);
+  try {
+    const result = await createWarehouse({
+      address_title: "De Lambora - Bagayam",
+      name: "De Lambora",
+      address_line_one: "No.71, Vaanavil Nagar, Vairamuthu Street",
+      address_line_two: "Bagayam",
+      pin_code: 632002
+    });
+    warehouseId = result.warehouse_id;
+  } catch (err: any) {
+    redirect(`/admin/shipmozo-setup?error=${encodeURIComponent(err.message)}`);
+  }
+
+  redirect(`/admin/shipmozo-setup?warehouse_id=${encodeURIComponent(warehouseId)}`);
 }
