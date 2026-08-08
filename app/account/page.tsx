@@ -10,6 +10,8 @@ export default function AccountPage() {
   const [user, setUser] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tracking, setTracking] = useState<Record<string, any>>({});
+  const [trackingLoading, setTrackingLoading] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data }) => {
@@ -33,6 +35,18 @@ export default function AccountPage() {
     await supabase.auth.signOut();
     router.push("/");
     router.refresh();
+  }
+
+  async function trackShipment(orderId: string, awb: string) {
+    setTrackingLoading(orderId);
+    try {
+      const res = await fetch(`/api/track-order?awb=${encodeURIComponent(awb)}`);
+      const data = await res.json();
+      setTracking((prev) => ({ ...prev, [orderId]: data }));
+    } catch {
+      setTracking((prev) => ({ ...prev, [orderId]: { error: "Could not fetch tracking" } }));
+    }
+    setTrackingLoading(null);
   }
 
   if (loading) return null;
@@ -71,6 +85,35 @@ export default function AccountPage() {
             <span>Total</span>
             <span>₹{Number(order.total).toLocaleString("en-IN")}</span>
           </div>
+
+          {order.awb_number ? (
+            <div className="mt-4 pt-4 border-t border-hairline">
+              <div className="flex items-center justify-between text-xs font-mono text-sand mb-2">
+                <span>
+                  {order.courier || "Courier"} · AWB {order.awb_number}
+                </span>
+                <button
+                  onClick={() => trackShipment(order.id, order.awb_number)}
+                  className="text-wineLight hover:text-bone"
+                  disabled={trackingLoading === order.id}
+                >
+                  {trackingLoading === order.id ? "Checking…" : "Track shipment"}
+                </button>
+              </div>
+              {tracking[order.id] && !tracking[order.id].error && (
+                <div className="text-sm">
+                  Status: <span className="text-bone">{tracking[order.id].current_status}</span>
+                </div>
+              )}
+              {tracking[order.id]?.error && (
+                <div className="text-xs text-sand">{tracking[order.id].error}</div>
+              )}
+            </div>
+          ) : (
+            <div className="mt-3 text-xs font-mono text-sand">
+              Shipment not yet assigned
+            </div>
+          )}
         </div>
       ))}
     </div>
