@@ -4,14 +4,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: "#0D0D0F",
-        bgElev: "#18181B",
-        bone: "#F5F1E8",
-        sand: "#A39B8B",
-        wine: "#C6A15B",
-        wineDeep: "#A67F3D",
-        wineLight: "#E0C48C",
-        hairline: "rgba(245,241,232,0.12)"
+        bg: "#F7F1E4",
+        bgElev: "#EFE6D2",
+        bone: "#23281F",
+        sand: "#746C5A",
+        wine: "#2F4A3C",
+        wineDeep: "#21362B",
+        wineLight: "#4F7862",
+        hairline: "rgba(35,40,31,0.14)"
       },
       fontFamily: {
         serif: ["Fraunces", "serif"],
