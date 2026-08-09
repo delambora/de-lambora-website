@@ -1,11 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
+
+const CATEGORY_LINKS = [
+  { href: "/collections/new", label: "New" },
+  { href: "/collections/shirts", label: "Shirts" },
+  { href: "/collections/tees", label: "Tees" },
+  { href: "/collections/polos", label: "Polos" },
+  { href: "/collections/sweatshirts", label: "Sweatshirts" },
+  { href: "/collections/hoodies", label: "Hoodies" },
+  { href: "/collections/bogo", label: "BOGO", accent: true },
+  { href: "/collections/premium", label: "Premium" },
+  { href: "/collections/sale", label: "Sale", accent: true }
+];
 
 export default function Navbar() {
   const { items } = useCart();
   const count = items.reduce((sum, i) => sum + i.qty, 0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const marqueeText =
     "Free shipping over ₹3000 · COD available · New drop: SS26 · 7-day easy returns · ";
@@ -20,37 +34,93 @@ export default function Navbar() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 items-center px-12 py-5">
-        <div className="flex items-center gap-6 text-sm">
-          <Link href="/account" className="hover:text-wineLight">Account</Link>
-          <Link href="/cart" className="hover:text-wineLight">
-            Bag
+      <div className="grid grid-cols-3 items-center px-5 md:px-12 py-4 md:py-5">
+        {/* Left: hamburger on mobile, Account/Bag on desktop */}
+        <div className="flex items-center">
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className="md:hidden text-bone"
+            aria-label="Menu"
+          >
+            {menuOpen ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                <path d="M5 5l14 14M19 5L5 19" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            )}
+          </button>
+
+          <div className="hidden md:flex items-center gap-6 text-sm">
+            <Link href="/account" className="hover:text-wineLight">Account</Link>
+            <Link href="/cart" className="hover:text-wineLight">
+              Bag
+              {count > 0 && (
+                <span className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-wine text-[10px] font-mono text-bg">
+                  {count}
+                </span>
+              )}
+            </Link>
+          </div>
+        </div>
+
+        {/* Center: logo */}
+        <Link href="/" className="font-serif text-lg md:text-xl tracking-wide text-center">
+          DE LAMBORA
+        </Link>
+
+        {/* Right: bag icon on mobile, spacer on desktop */}
+        <div className="flex justify-end">
+          <Link href="/cart" className="md:hidden relative text-bone" aria-label="Bag">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <path d="M6 8h12l-1 12H7L6 8Z" />
+              <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+            </svg>
             {count > 0 && (
-              <span className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-wine text-[10px] font-mono">
+              <span className="absolute -top-2 -right-2 inline-flex items-center justify-center w-4 h-4 rounded-full bg-wine text-[10px] font-mono text-bg">
                 {count}
               </span>
             )}
           </Link>
         </div>
-
-        <Link href="/" className="font-serif text-xl tracking-wide text-center">
-          DE LAMBORA
-        </Link>
-
-        <div />
       </div>
 
+      {/* Desktop category row */}
       <div className="hidden md:flex justify-center gap-8 text-sm text-sand pb-4">
-        <Link href="/collections/new" className="hover:text-bone">New</Link>
-        <Link href="/collections/shirts" className="hover:text-bone">Shirts</Link>
-        <Link href="/collections/tees" className="hover:text-bone">Tees</Link>
-        <Link href="/collections/polos" className="hover:text-bone">Polos</Link>
-        <Link href="/collections/sweatshirts" className="hover:text-bone">Sweatshirts</Link>
-        <Link href="/collections/hoodies" className="hover:text-bone">Hoodies</Link>
-        <Link href="/collections/bogo" className="hover:text-bone text-wineLight">BOGO</Link>
-        <Link href="/collections/premium" className="hover:text-bone">Premium</Link>
-        <Link href="/collections/sale" className="hover:text-bone text-wineLight">Sale</Link>
+        {CATEGORY_LINKS.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`hover:text-bone ${link.accent ? "text-wineLight" : ""}`}
+          >
+            {link.label}
+          </Link>
+        ))}
       </div>
+
+      {/* Mobile menu panel */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-hairline px-5 py-5">
+          <div className="flex flex-col gap-4">
+            <Link href="/account" onClick={() => setMenuOpen(false)} className="text-sm text-sand hover:text-bone">
+              Account
+            </Link>
+            <div className="border-t border-hairline my-1" />
+            {CATEGORY_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className={`text-sm hover:text-bone ${link.accent ? "text-wineLight" : "text-sand"}`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
