@@ -14,7 +14,7 @@ module.exports = {
         hairline: "rgba(32,28,23,0.16)"
       },
       fontFamily: {
-        serif: ["'Playfair Display'", "serif"],
+        serif: ["Fraunces", "serif"],
         sans: ["Inter", "sans-serif"],
         mono: ["'IBM Plex Mono'", "monospace"]
       }
