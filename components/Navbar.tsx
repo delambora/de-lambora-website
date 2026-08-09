@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
 
@@ -20,28 +20,40 @@ export default function Navbar() {
   const { items } = useCart();
   const count = items.reduce((sum, i) => sum + i.qty, 0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 40);
+    }
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const marqueeText =
     "Free shipping over ₹3000 · COD available · New drop: SS26 · 7-day easy returns · ";
 
   return (
     <nav className="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-hairline">
-      {/* Scrolling marquee strip */}
-      <div className="overflow-hidden py-2 border-b border-hairline">
+      {/* Scrolling marquee strip — hides once scrolled, for a tighter header */}
+      <div
+        className={`overflow-hidden border-b border-hairline transition-all duration-300 ${
+          scrolled ? "max-h-0 py-0 opacity-0" : "max-h-10 py-2 opacity-100"
+        }`}
+      >
         <div className="marquee-track flex whitespace-nowrap font-mono text-xs tracking-wide text-sand">
           <span className="px-4">{marqueeText.repeat(4)}</span>
           <span className="px-4" aria-hidden="true">{marqueeText.repeat(4)}</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-3 items-center px-5 md:px-12 py-4 md:py-5">
-        {/* Left: hamburger on mobile, Account/Bag on desktop */}
+      <div
+        className={`grid grid-cols-3 items-center px-5 md:px-12 transition-all duration-300 ${
+          scrolled ? "py-2.5 md:py-3" : "py-4 md:py-5"
+        }`}
+      >
         <div className="flex items-center">
-          <button
-            onClick={() => setMenuOpen((v) => !v)}
-            className="md:hidden text-bone"
-            aria-label="Menu"
-          >
+          <button onClick={() => setMenuOpen((v) => !v)} className="md:hidden text-bone" aria-label="Menu">
             {menuOpen ? (
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                 <path d="M5 5l14 14M19 5L5 19" />
@@ -66,12 +78,15 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Center: logo */}
-        <Link href="/" className="font-serif text-lg md:text-xl tracking-wide text-center">
+        <Link
+          href="/"
+          className={`font-serif tracking-wide text-center transition-all duration-300 ${
+            scrolled ? "text-base md:text-lg" : "text-lg md:text-xl"
+          }`}
+        >
           DE LAMBORA
         </Link>
 
-        {/* Right: bag icon on mobile, spacer on desktop */}
         <div className="flex justify-end">
           <Link href="/cart" className="md:hidden relative text-bone" aria-label="Bag">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
@@ -87,20 +102,18 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Desktop category row */}
-      <div className="hidden md:flex justify-center gap-8 text-sm text-sand pb-4">
+      <div
+        className={`hidden md:flex justify-center gap-8 text-sm text-sand transition-all duration-300 ${
+          scrolled ? "max-h-0 opacity-0 overflow-hidden" : "max-h-10 opacity-100 pb-4"
+        }`}
+      >
         {CATEGORY_LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`hover:text-bone ${link.accent ? "text-wineLight" : ""}`}
-          >
+          <Link key={link.href} href={link.href} className={`hover:text-bone ${link.accent ? "text-wineLight" : ""}`}>
             {link.label}
           </Link>
         ))}
       </div>
 
-      {/* Mobile menu panel */}
       {menuOpen && (
         <div className="md:hidden border-t border-hairline px-5 py-5">
           <div className="flex flex-col gap-4">
