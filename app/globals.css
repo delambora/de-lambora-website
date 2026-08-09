@@ -40,3 +40,8 @@ body {
 .font-light {
   font-weight: 450 !important;
 }
+/* Scales all text sizes up slightly across the whole site, since Tailwind's
+   text sizes are relative to the root font-size. */
+html {
+  font-size: 107.5%;
+}
