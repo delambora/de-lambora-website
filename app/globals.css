@@ -42,6 +42,9 @@ body {
 }
 /* Scales all text sizes up slightly across the whole site, since Tailwind's
    text sizes are relative to the root font-size. */
-html {
-  font-size: 107.5%;
+/* Slightly bigger text on desktop only — mobile stays at normal size */
+@media (min-width: 768px) {
+  html {
+    font-size: 107.5%;
+  }
 }
