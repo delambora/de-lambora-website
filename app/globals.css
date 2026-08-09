@@ -36,3 +36,9 @@ body {
     transform: translateX(-50%);
   }
 }
+/* Headings across the site use a light font-weight, which reads elegant on
+   a dark background but looks thin and washed out on a light one. This
+   bumps them all up one weight, site-wide, from a single place. */
+.font-light {
+  font-weight: 450 !important;
+}
