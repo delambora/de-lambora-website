@@ -15,6 +15,16 @@ export default function FadeIn({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // If it's already on screen the moment this loads (e.g. the page was
+    // opened already scrolled down, or navigation lands mid-page), show it
+    // immediately instead of waiting on the observer to catch up.
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -22,10 +32,19 @@ export default function FadeIn({
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.05, rootMargin: "100px 0px" }
     );
     observer.observe(el);
-    return () => observer.disconnect();
+
+    // Safety net: if for any reason the observer never fires (an edge case
+    // in some browsers, or a fast/unusual scroll), never leave real content
+    // permanently invisible — reveal it after a short delay regardless.
+    const fallback = setTimeout(() => setVisible(true), 1200);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallback);
+    };
   }, []);
 
   return (
