@@ -1,19 +1,8 @@
+```tsx
 "use client";
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
-
-const CATEGORY_LINKS = [
-  { href: "/collections/new", label: "New" },
-  { href: "/collections/shirts", label: "Shirts" },
-  { href: "/collections/tees", label: "Tees" },
-  { href: "/collections/polos", label: "Polos" },
-  { href: "/collections/sweatshirts", label: "Sweatshirts" },
-  { href: "/collections/hoodies", label: "Hoodies" },
-  { href: "/collections/bogo", label: "BOGO", accent: true },
-  { href: "/collections/premium", label: "Premium" },
-  { href: "/collections/sale", label: "Sale", accent: true },
-];
 
 export default function Navbar() {
   const { items } = useCart();
@@ -23,11 +12,9 @@ export default function Navbar() {
     "Free shipping over ₹3000 · COD available · New drop: SS26 · 7-day easy returns · ";
 
   return (
-    <nav className="sticky top-0 z-50 bg-bg/95 backdrop-blur border-b border-hairline">
+    <nav className="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-hairline">
 
-      {/* =========================================================
-          TOP MARQUEE
-      ========================================================= */}
+      {/* Scrolling marquee strip */}
       <div className="overflow-hidden py-2 border-b border-hairline">
         <div className="marquee-track flex whitespace-nowrap font-mono text-xs tracking-wide text-sand">
           <span className="px-4">
@@ -40,99 +27,36 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* =========================================================
-          MAIN NAVBAR
-      ========================================================= */}
-      <div className="grid grid-cols-3 items-center px-5 md:px-12 py-4 md:py-5">
+      {/* Main navigation */}
+      <div className="flex items-center justify-between px-12 py-5">
 
-        {/* LEFT — ACCOUNT / MOBILE MENU */}
-        <div className="flex items-center">
-
-          {/* Mobile menu */}
-          <div className="md:hidden">
-            <MobileMenu />
-          </div>
-
-          {/* Desktop account */}
-          <div className="hidden md:flex items-center gap-7 text-sm">
-
-            <Link
-              href="/account"
-              className="flex items-center gap-2 hover:text-wineLight transition-colors"
-            >
-              {/* Account icon */}
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 20c1.8-3.6 5-5.5 8-5.5s6.2 1.9 8 5.5" />
-              </svg>
-
-              <span>Log in / Sign up</span>
-            </Link>
-
-            {/* Bag */}
-            <Link
-              href="/cart"
-              className="relative flex items-center gap-2 hover:text-wineLight transition-colors"
-            >
-              {/* Bag icon */}
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M6 8h12l-1 12H7L6 8Z" />
-                <path d="M9 8V6a3 3 0 0 1 6 0v2" />
-              </svg>
-
-              <span>Bag</span>
-
-              {count > 0 && (
-                <span className="inline-flex items-center justify-center min-w-4 h-4 px-1 rounded-full bg-wine text-[10px] font-mono text-white">
-                  {count}
-                </span>
-              )}
-            </Link>
-
-          </div>
-        </div>
-
-        {/* =======================================================
-            CENTER — BRAND
-            ======================================================= */}
+        {/* LEFT — BRAND */}
         <Link
           href="/"
-          className="font-serif text-lg md:text-xl tracking-wide text-center uppercase"
+          className="font-serif text-xl tracking-wide"
         >
           DE LAMBORA
         </Link>
 
-        {/* =======================================================
-            RIGHT — MOBILE BAG
-        ======================================================= */}
-        <div className="flex justify-end md:hidden">
+        {/* RIGHT — ACCOUNT + BAG */}
+        <div className="flex items-center gap-7 text-sm">
+
+          <Link
+            href="/account"
+            className="hover:text-wineLight transition-colors"
+          >
+            Log in / Sign up
+          </Link>
 
           <Link
             href="/cart"
-            className="relative flex items-center text-bone"
-            aria-label="Bag"
+            className="flex items-center gap-2 hover:text-wineLight transition-colors"
           >
+            {/* Cart icon */}
             <svg
-              width="22"
-              height="22"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -140,106 +64,91 @@ export default function Navbar() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M6 8h12l-1 12H7L6 8Z" />
-              <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+              <circle cx="9" cy="20" r="1" />
+              <circle cx="20" cy="20" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
 
+            <span>Bag</span>
+
             {count > 0 && (
-              <span className="absolute -top-2 -right-2 inline-flex items-center justify-center min-w-4 h-4 px-1 rounded-full bg-wine text-[10px] font-mono text-white">
+              <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-wine text-[10px] font-mono">
                 {count}
               </span>
             )}
           </Link>
 
         </div>
-
-        {/* Desktop empty third column */}
-        <div className="hidden md:block" />
-
       </div>
 
-      {/* =========================================================
-          CATEGORY NAVIGATION
-      ========================================================= */}
+      {/* Category navigation */}
       <div className="hidden md:flex justify-center gap-8 text-sm text-sand pb-4">
 
-        {CATEGORY_LINKS.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`hover:text-bone transition-colors ${
-              link.accent ? "text-wineLight" : ""
-            }`}
-          >
-            {link.label}
-          </Link>
-        ))}
+        <Link
+          href="/collections/new"
+          className="hover:text-bone"
+        >
+          New
+        </Link>
+
+        <Link
+          href="/collections/shirts"
+          className="hover:text-bone"
+        >
+          Shirts
+        </Link>
+
+        <Link
+          href="/collections/tees"
+          className="hover:text-bone"
+        >
+          Tees
+        </Link>
+
+        <Link
+          href="/collections/polos"
+          className="hover:text-bone"
+        >
+          Polos
+        </Link>
+
+        <Link
+          href="/collections/sweatshirts"
+          className="hover:text-bone"
+        >
+          Sweatshirts
+        </Link>
+
+        <Link
+          href="/collections/hoodies"
+          className="hover:text-bone"
+        >
+          Hoodies
+        </Link>
+
+        <Link
+          href="/collections/bogo"
+          className="hover:text-bone text-wineLight"
+        >
+          BOGO
+        </Link>
+
+        <Link
+          href="/collections/premium"
+          className="hover:text-bone"
+        >
+          Premium
+        </Link>
+
+        <Link
+          href="/collections/sale"
+          className="hover:text-bone text-wineLight"
+        >
+          Sale
+        </Link>
 
       </div>
-
     </nav>
   );
 }
-
-
-/* ===============================================================
-   MOBILE MENU
-   =============================================================== */
-
-function MobileMenu() {
-  return (
-    <details className="relative">
-
-      <summary
-        className="list-none cursor-pointer text-bone"
-        aria-label="Open menu"
-      >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        >
-          <path d="M3 6h18" />
-          <path d="M3 12h18" />
-          <path d="M3 18h18" />
-        </svg>
-      </summary>
-
-      <div className="absolute left-[-20px] top-[45px] w-[280px] bg-bg border border-hairline shadow-xl px-5 py-5">
-
-        <div className="flex flex-col gap-4">
-
-          <Link
-            href="/account"
-            className="text-sm text-sand hover:text-bone"
-          >
-            Log in / Sign up
-          </Link>
-
-          <div className="border-t border-hairline my-1" />
-
-          {CATEGORY_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-sm hover:text-bone ${
-                link.accent
-                  ? "text-wineLight"
-                  : "text-sand"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
-
-        </div>
-
-      </div>
-
-    </details>
-  );
-}
+```
