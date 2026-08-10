@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
 
@@ -21,12 +21,25 @@ export default function Navbar() {
   const count = items.reduce((sum, i) => sum + i.qty, 0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const ticking = useRef(false);
 
   useEffect(() => {
     function onScroll() {
-      setScrolled(window.scrollY > 40);
+      if (ticking.current) return;
+      ticking.current = true;
+
+      requestAnimationFrame(() => {
+        setScrolled((prev) => {
+          // Different thresholds for collapsing vs expanding, so hovering
+          // right at one point can't make it flicker back and forth.
+          if (!prev && window.scrollY > 80) return true;
+          if (prev && window.scrollY < 40) return false;
+          return prev;
+        });
+        ticking.current = false;
+      });
     }
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -35,7 +48,6 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-hairline">
-      {/* Scrolling marquee strip — hides once scrolled, for a tighter header */}
       <div
         className={`overflow-hidden border-b border-hairline transition-all duration-300 ${
           scrolled ? "max-h-0 py-0 opacity-0" : "max-h-10 py-2 opacity-100"
