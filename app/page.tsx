@@ -149,7 +149,6 @@ export default async function HomePage() {
             </p>
           )}
 
-          {/* VIEW ALL PRODUCTS */}
           <div className="flex justify-center mt-10 md:mt-12 px-5">
             <Link
               href="/collections/new"
@@ -166,7 +165,90 @@ export default async function HomePage() {
         <PromoBanner />
       </FadeIn>
 
-      {/* HERO 2 — SECONDARY CAMPAIGN */}
+      {/* FEATURED COLLECTIONS */}
+      <FadeIn>
+        <section className="px-5 md:px-12 py-16 md:py-24">
+          <div className="text-center mb-10 md:mb-14">
+            <div className="eyebrow mb-3">
+              Explore
+            </div>
+
+            <h2 className="font-serif text-2xl md:text-3xl font-light">
+              The collections
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+            {/* SHIRTS */}
+            <Link
+              href="/collections/shirts"
+              className="group relative aspect-[4/5] overflow-hidden bg-bgElev"
+            >
+              <div className="absolute inset-0 flex items-end p-6 md:p-8 z-10">
+                <div>
+                  <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">
+                    Collection
+                  </p>
+
+                  <h3 className="font-serif text-2xl md:text-3xl text-white font-light">
+                    Shirts
+                  </h3>
+                </div>
+              </div>
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-[1]" />
+
+              <div className="absolute inset-0 bg-bgElev transition-transform duration-700 group-hover:scale-[1.03]" />
+            </Link>
+
+            {/* TEES */}
+            <Link
+              href="/collections/tees"
+              className="group relative aspect-[4/5] overflow-hidden bg-bgElev"
+            >
+              <div className="absolute inset-0 flex items-end p-6 md:p-8 z-10">
+                <div>
+                  <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">
+                    Collection
+                  </p>
+
+                  <h3 className="font-serif text-2xl md:text-3xl text-white font-light">
+                    T-Shirts
+                  </h3>
+                </div>
+              </div>
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-[1]" />
+
+              <div className="absolute inset-0 bg-bgElev transition-transform duration-700 group-hover:scale-[1.03]" />
+            </Link>
+
+            {/* PREMIUM */}
+            <Link
+              href="/collections/premium"
+              className="group relative aspect-[4/5] overflow-hidden bg-bgElev"
+            >
+              <div className="absolute inset-0 flex items-end p-6 md:p-8 z-10">
+                <div>
+                  <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">
+                    Collection
+                  </p>
+
+                  <h3 className="font-serif text-2xl md:text-3xl text-white font-light">
+                    Premium
+                  </h3>
+                </div>
+              </div>
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-[1]" />
+
+              <div className="absolute inset-0 bg-bgElev transition-transform duration-700 group-hover:scale-[1.03]" />
+            </Link>
+          </div>
+        </section>
+      </FadeIn>
+
+      {/* HERO 2 */}
       <FadeIn>
         <Hero2 />
       </FadeIn>
