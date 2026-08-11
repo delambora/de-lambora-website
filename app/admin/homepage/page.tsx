@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import CropUpload from "@/components/CropUpload";
 import {
   updateHero,
   updateHero2,
