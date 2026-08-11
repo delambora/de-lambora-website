@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-hairline mt-24">
+    <footer className="border-t border-hairline">
       <div className="max-w-7xl mx-auto px-12 py-16 grid gap-12 md:grid-cols-4">
 
         {/* Brand */}
@@ -20,9 +20,11 @@ export default function Footer() {
           <h3 className="font-serif text-lg mb-4">Shop</h3>
 
           <ul className="space-y-2 text-sm text-sand">
-            <li><Link href="/collections/tshirts">T-Shirts</Link></li>
+            <li><Link href="/collections/new">New Arrivals</Link></li>
+            <li><Link href="/collections/tees">T-Shirts</Link></li>
             <li><Link href="/collections/polos">Polos</Link></li>
-            <li><Link href="/collections/new-arrivals">New Arrivals</Link></li>
+            <li><Link href="/collections/hoodies">Hoodies</Link></li>
+            <li><Link href="/collections/sweatshirts">Sweatshirts</Link></li>
           </ul>
         </div>
 
