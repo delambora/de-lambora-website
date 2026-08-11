@@ -197,7 +197,6 @@ export default async function HomePage() {
       {/* TRUST STRIP */}
       <TrustStrip />
 
-      {/* FOOTER */}
     </>
   );
 }
