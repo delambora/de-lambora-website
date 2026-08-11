@@ -1,7 +1,10 @@
-import PromoBanner from "@/components/PromoBanner";
-import TrustStrip from "@/components/TrustStrip";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import PromoBanner from "@/components/PromoBanner";
+import TrustStrip from "@/components/TrustStrip";
+import FadeIn from "@/components/FadeIn";
+import ProductCarousel from "@/components/ProductCarousel";
+import CategoryTiles from "@/components/CategoryTiles";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -28,175 +31,134 @@ export default async function HomePage() {
     cta_text: "Shop the collection",
     cta_link: "#new-arrivals",
     media_type: "image",
-    media_url: null,
+    media_url: null
   };
 
+  const productList = products ?? [];
+
   return (
-    <>
-      {/* HERO IMAGE */}
-      <section className="px-12 pt-8 pb-0">
-        <div className="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden bg-bgElev flex items-center justify-center">
-          {hero.media_url ? (
-            hero.media_type === "video" ? (
-              <video
-                src={hero.media_url}
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                loop
-                playsInline
-              />
-            ) : (
-              <img
-                src={hero.media_url}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            )
+    <main>
+      {/* FULL-BLEED HERO */}
+      {hero.media_url ? (
+        <section className="relative w-full h-[70vh] md:h-[88vh] overflow-hidden">
+          {hero.media_type === "video" ? (
+            <video
+              src={hero.media_url}
+              className="absolute inset-0 w-full h-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
           ) : (
-            <div className="text-center text-sand">
-              <svg
-                viewBox="0 0 100 100"
-                fill="none"
-                stroke="#A79C86"
-                strokeWidth="1"
-                className="w-16 h-16 mx-auto mb-3"
-              >
-                <rect
-                  x="15"
-                  y="25"
-                  width="70"
-                  height="50"
-                  rx="2"
-                />
-                <circle
-                  cx="35"
-                  cy="42"
-                  r="6"
-                />
-                <path d="M15 65 L38 48 L55 60 L70 45 L85 60" />
-              </svg>
-
-              <p className="font-mono text-xs">
-                Hero photo/video goes here — add it in Admin → Homepage
-              </p>
-            </div>
+            <img src={hero.media_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
           )}
-        </div>
-      </section>
 
-      {/* HERO TEXT — BELOW IMAGE */}
-      <section className="px-12 pt-12 pb-20">
-        <div className="eyebrow mb-4">
-          SS26 — Collection No. 04
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/0" />
 
-        <h1 className="font-serif text-5xl md:text-6xl font-light leading-tight max-w-2xl">
-          {hero.headline_line1}
-          <br />
-
-          <em className="italic font-normal text-wineLight">
-            {hero.headline_emphasis}
-          </em>
-        </h1>
-
-        <p className="mt-5 max-w-md text-sand text-sm leading-relaxed">
-          {hero.subtext}
-        </p>
-
-        <a
-          href={hero.cta_link || "#new-arrivals"}
-          className="inline-block mt-7 bg-wine hover:bg-wineDeep px-8 py-3.5 text-sm tracking-wide"
-        >
-          {hero.cta_text}
-        </a>
-      </section>
-
-      {/* NEW ARRIVALS */}
-      <section
-        id="new-arrivals"
-        className="px-12 pb-24"
-      >
-        <div className="eyebrow mb-2">
-          Just in
-        </div>
-
-        <h2 className="font-serif text-2xl font-light mb-9">
-          New arrivals
-        </h2>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-7">
-          {(products ?? []).map((p: any) => (
-            <Link
-              key={p.id}
-              href={`/products/${p.slug}`}
-              className="block"
+          <div className="absolute inset-0 flex flex-col justify-end px-5 md:px-12 pb-12 md:pb-20 text-white">
+            <div className="eyebrow mb-3 text-white/75">SS26 — Collection No. 04</div>
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-light leading-tight max-w-xl">
+              {hero.headline_line1}
+              <br />
+              <em className="italic font-normal">{hero.headline_emphasis}</em>
+            </h1>
+            <p className="mt-4 max-w-md text-white/80 text-sm leading-relaxed">{hero.subtext}</p>
+            <a
+              href="#new-arrivals"
+              className="inline-block mt-7 w-fit border border-white/70 px-6 md:px-7 py-2.5 md:py-3 text-xs tracking-[0.15em] uppercase hover:bg-white hover:text-black transition-colors"
             >
-              <div
-                className="aspect-[3/4] mb-3.5 overflow-hidden"
-                style={{
-                  background: p.image_bg,
-                }}
-              >
-                {p.images?.[0] ? (
-                  <img
-                    src={p.images[0]}
-                    alt={p.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <svg
-                      viewBox="0 0 100 100"
-                      fill="none"
-                      stroke="#F3EEE3"
-                      strokeWidth="1.4"
-                      className="w-14 h-14"
-                    >
-                      <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
+              {hero.cta_text}
+            </a>
+          </div>
+        </section>
+      ) : (
+        <section className="px-5 md:px-12 pt-16 md:pt-28 pb-10 md:pb-16">
+          <div className="eyebrow mb-3 md:mb-4">SS26 — Collection No. 04</div>
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-light leading-tight max-w-xl">
+            {hero.headline_line1}
+            <br />
+            <em className="italic font-normal text-wineLight">{hero.headline_emphasis}</em>
+          </h1>
+          <p className="mt-4 max-w-md text-sand text-sm leading-relaxed">{hero.subtext}</p>
+          <a
+            href="#new-arrivals"
+            className="inline-block mt-7 border border-hairline px-6 md:px-7 py-2.5 md:py-3 text-xs tracking-[0.15em] uppercase hover:border-bone transition-colors"
+          >
+            {hero.cta_text}
+          </a>
+        </section>
+      )}
 
-              <div className="font-serif text-base mb-1">
-                {p.name}
-              </div>
+      {/* CATEGORY TILES */}
+      <FadeIn>
+        <section className="px-5 md:px-12 pt-16 md:pt-28 pb-16 md:pb-24">
+          <div className="eyebrow mb-2">Shop by category</div>
+          <h2 className="font-serif text-xl md:text-2xl font-light mb-8 md:mb-10">Find your fit</h2>
+          <CategoryTiles products={productList} />
+        </section>
+      </FadeIn>
 
-              <div className="font-mono text-sm text-sand">
-                ₹{Number(p.price).toLocaleString("en-IN")}
-              </div>
+      {/* LATEST ARRIVALS — CAROUSEL */}
+      <FadeIn>
+        <section id="new-arrivals" className="pb-16 md:pb-24">
+          <div className="px-5 md:px-12">
+            <div className="eyebrow mb-2">Just in</div>
+            <h2 className="font-serif text-xl md:text-2xl font-light mb-8 md:mb-10">Latest arrivals</h2>
+          </div>
 
-              <div className="flex gap-1.5 mt-2">
-                {(p.colors ?? []).map(
-                  (c: any, i: number) => (
-                    <span
-                      key={i}
-                      className="w-3 h-3 rounded-full border border-hairline"
-                      style={{
-                        background: c.hex,
-                      }}
-                    />
-                  )
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {(!products || products.length === 0) && (
-          <p className="text-sand text-sm">
-            No products yet — add some in the admin panel.
-          </p>
-        )}
-      </section>
+          {productList.length > 0 ? (
+            <ProductCarousel products={productList.slice(0, 12)} />
+          ) : (
+            <p className="text-sand text-sm px-5 md:px-12">No products yet — add some in the admin panel.</p>
+          )}
+        </section>
+      </FadeIn>
 
       {/* PROMO BANNER */}
-      <PromoBanner />
+      <FadeIn>
+        <PromoBanner />
+      </FadeIn>
 
-      {/* TRUST STRIP */}
+      {/* FULL CATALOG GRID */}
+      <FadeIn>
+        <section className="px-5 md:px-12 pb-20 md:pb-28">
+          <div className="eyebrow mb-2">The full range</div>
+          <h2 className="font-serif text-xl md:text-2xl font-light mb-8 md:mb-10">All products</h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-7">
+            {productList.map((p: any) => (
+              <Link key={p.id} href={`/products/${p.slug}`} className="block group">
+                <div className="aspect-[3/4] mb-2.5 md:mb-3.5 overflow-hidden" style={{ background: p.image_bg }}>
+                  {p.images?.[0] ? (
+                    <img
+                      src={p.images[0]}
+                      alt={p.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.4" className="w-14 h-14 text-sand">
+                        <path d="M35 20 L42 14 L50 18 L58 14 L65 20 L65 30 L58 27 L58 82 L42 82 L42 27 L35 30 Z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <div className="font-serif text-sm md:text-base mb-1">{p.name}</div>
+                <div className="font-mono text-xs md:text-sm text-sand">₹{Number(p.price).toLocaleString("en-IN")}</div>
+                <div className="flex gap-1.5 mt-2">
+                  {(p.colors ?? []).map((c: any, i: number) => (
+                    <span key={i} className="w-3 h-3 rounded-full border border-hairline" style={{ background: c.hex }} />
+                  ))}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </FadeIn>
+
+      {/* QUIET TRUST LINE */}
       <TrustStrip />
-
-    </>
+    </main>
   );
 }
