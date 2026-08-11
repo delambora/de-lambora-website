@@ -48,3 +48,13 @@ body {
     font-size: 107.5%;
   }
 }
+/* Add to the end of app/globals.css — hides the scrollbar on the product
+   carousel while keeping it swipeable/scrollable */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
