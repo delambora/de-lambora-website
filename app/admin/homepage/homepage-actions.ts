@@ -19,37 +19,6 @@ async function assertAdmin() {
   }
 }
 
-async function uploadMedia(
-  admin: any,
-  file: File,
-  prefix: string
-) {
-  const ext = file.name.split(".").pop() || "jpg";
-  const path = `${prefix}-${crypto.randomUUID()}.${ext}`;
-
-  const { error } = await admin.storage
-    .from("site-media")
-    .upload(path, file, {
-      contentType: file.type,
-      upsert: false,
-    });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  const { data } = admin.storage
-    .from("site-media")
-    .getPublicUrl(path);
-
-  return {
-    media_url: data.publicUrl,
-    media_type: file.type.startsWith("video")
-      ? "video"
-      : "image",
-  };
-}
-
 /* =========================================================
    HERO 1
 ========================================================= */
@@ -67,21 +36,11 @@ export async function updateHero(formData: FormData) {
     formData.get("headline_emphasis") || ""
   );
 
-  const subtext = String(
-    formData.get("subtext") || ""
-  );
+  const subtext = String(formData.get("subtext") || "");
+  const cta_text = String(formData.get("cta_text") || "");
+  const cta_link = String(formData.get("cta_link") || "");
 
-  const cta_text = String(
-    formData.get("cta_text") || ""
-  );
-
-  const cta_link = String(
-    formData.get("cta_link") || ""
-  );
-
-  const existingMediaUrl = formData.get(
-    "existingMediaUrl"
-  );
+  const existingMediaUrl = formData.get("existingMediaUrl");
 
   const existingMediaType = String(
     formData.get("existingMediaType") || "image"
@@ -96,14 +55,30 @@ export async function updateHero(formData: FormData) {
   const file = formData.get("media") as File | null;
 
   if (file && file.size > 0) {
-    const uploaded = await uploadMedia(
-      admin,
-      file,
-      "hero"
-    );
+    const ext = file.name.split(".").pop() || "jpg";
 
-    media_url = uploaded.media_url;
-    media_type = uploaded.media_type;
+    const path = `hero-${crypto.randomUUID()}.${ext}`;
+
+    const { error } = await admin.storage
+      .from("site-media")
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    const { data } = admin.storage
+      .from("site-media")
+      .getPublicUrl(path);
+
+    media_url = data.publicUrl;
+
+    media_type = file.type.startsWith("video")
+      ? "video"
+      : "image";
   }
 
   const { error } = await admin
@@ -126,8 +101,8 @@ export async function updateHero(formData: FormData) {
     throw new Error(error.message);
   }
 
-  revalidatePath("/admin/homepage");
   revalidatePath("/");
+  revalidatePath("/admin/homepage");
 
   redirect("/admin/homepage");
 }
@@ -158,7 +133,7 @@ export async function updateHero2(formData: FormData) {
   );
 
   const cta_link = String(
-    formData.get("cta_link") || "/collections/new"
+    formData.get("cta_link") || ""
   );
 
   const existingMediaUrl = formData.get(
@@ -175,19 +150,33 @@ export async function updateHero2(formData: FormData) {
 
   let media_type = existingMediaType;
 
-  const file = formData.get(
-    "hero2Media"
-  ) as File | null;
+  const file = formData.get("hero2Media") as File | null;
 
   if (file && file.size > 0) {
-    const uploaded = await uploadMedia(
-      admin,
-      file,
-      "hero-2"
-    );
+    const ext = file.name.split(".").pop() || "jpg";
 
-    media_url = uploaded.media_url;
-    media_type = uploaded.media_type;
+    const path = `hero-2-${crypto.randomUUID()}.${ext}`;
+
+    const { error } = await admin.storage
+      .from("site-media")
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    const { data } = admin.storage
+      .from("site-media")
+      .getPublicUrl(path);
+
+    media_url = data.publicUrl;
+
+    media_type = file.type.startsWith("video")
+      ? "video"
+      : "image";
   }
 
   const { error } = await admin
@@ -210,19 +199,17 @@ export async function updateHero2(formData: FormData) {
     throw new Error(error.message);
   }
 
-  revalidatePath("/admin/homepage");
   revalidatePath("/");
+  revalidatePath("/admin/homepage");
 
   redirect("/admin/homepage");
 }
 
 /* =========================================================
-   PROMO BANNER
+   PROMO BANNER / NEW DROP
 ========================================================= */
 
-export async function updatePromoBanner(
-  formData: FormData
-) {
+export async function updatePromoBanner(formData: FormData) {
   await assertAdmin();
 
   const admin = createAdminClient();
@@ -240,8 +227,7 @@ export async function updatePromoBanner(
   );
 
   const cta_link = String(
-    formData.get("promo_cta_link") ||
-      "/collections/new"
+    formData.get("promo_cta_link") || ""
   );
 
   const existingMediaUrl = formData.get(
@@ -258,19 +244,33 @@ export async function updatePromoBanner(
 
   let media_type = existingMediaType;
 
-  const file = formData.get(
-    "promoMedia"
-  ) as File | null;
+  const file = formData.get("promoMedia") as File | null;
 
   if (file && file.size > 0) {
-    const uploaded = await uploadMedia(
-      admin,
-      file,
-      "promo-banner"
-    );
+    const ext = file.name.split(".").pop() || "jpg";
 
-    media_url = uploaded.media_url;
-    media_type = uploaded.media_type;
+    const path = `promo-${crypto.randomUUID()}.${ext}`;
+
+    const { error } = await admin.storage
+      .from("site-media")
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    const { data } = admin.storage
+      .from("site-media")
+      .getPublicUrl(path);
+
+    media_url = data.publicUrl;
+
+    media_type = file.type.startsWith("video")
+      ? "video"
+      : "image";
   }
 
   const { error } = await admin
@@ -292,8 +292,8 @@ export async function updatePromoBanner(
     throw new Error(error.message);
   }
 
-  revalidatePath("/admin/homepage");
   revalidatePath("/");
+  revalidatePath("/admin/homepage");
 
   redirect("/admin/homepage");
 }
