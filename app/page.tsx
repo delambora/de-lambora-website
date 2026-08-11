@@ -5,6 +5,7 @@ import TrustStrip from "@/components/TrustStrip";
 import FadeIn from "@/components/FadeIn";
 import ProductCarousel from "@/components/ProductCarousel";
 import CategoryTiles from "@/components/CategoryTiles";
+import Hero2 from "@/components/Hero2";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -160,9 +161,14 @@ export default async function HomePage() {
         </section>
       </FadeIn>
 
-      {/* PROMO / NEW DROP */}
+      {/* NEW DROP / PROMO BANNER */}
       <FadeIn>
         <PromoBanner />
+      </FadeIn>
+
+      {/* HERO 2 — SECONDARY CAMPAIGN */}
+      <FadeIn>
+        <Hero2 />
       </FadeIn>
 
       {/* TRUST STRIP */}
