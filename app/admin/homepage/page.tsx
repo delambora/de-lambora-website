@@ -3,6 +3,7 @@ import {
   updateHero,
   updateHero2,
   updatePromoBanner,
+  updateCategoryTiles,
 } from "../homepage-actions";
 
 const inputClass =
@@ -29,9 +30,52 @@ export default async function AdminHomepagePage() {
     .eq("key", "promo_banner")
     .single();
 
+  const { data: categoryData } = await supabase
+    .from("site_content")
+    .select("value")
+    .eq("key", "homepage_categories")
+    .single();
+
   const hero = heroData?.value ?? {};
   const hero2 = hero2Data?.value ?? {};
   const promo = promoData?.value ?? {};
+  const categories = categoryData?.value ?? {};
+
+  const categoryDefaults = {
+    category1: {
+      eyebrow: "Collection",
+      title: "Shirts",
+      link: "/collections/shirts",
+      image_url: "",
+    },
+    category2: {
+      eyebrow: "Collection",
+      title: "T-Shirts",
+      link: "/collections/tees",
+      image_url: "",
+    },
+    category3: {
+      eyebrow: "Collection",
+      title: "Premium",
+      link: "/collections/premium",
+      image_url: "",
+    },
+  };
+
+  const category1 = {
+    ...categoryDefaults.category1,
+    ...(categories.category1 ?? {}),
+  };
+
+  const category2 = {
+    ...categoryDefaults.category2,
+    ...(categories.category2 ?? {}),
+  };
+
+  const category3 = {
+    ...categoryDefaults.category3,
+    ...(categories.category3 ?? {}),
+  };
 
   return (
     <div className="space-y-16">
@@ -59,7 +103,6 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Headline — line 1
             </label>
-
             <input
               name="headline_line1"
               defaultValue={hero.headline_line1}
@@ -71,7 +114,6 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Headline — emphasis
             </label>
-
             <input
               name="headline_emphasis"
               defaultValue={hero.headline_emphasis}
@@ -83,7 +125,6 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Subtext
             </label>
-
             <textarea
               name="subtext"
               defaultValue={hero.subtext}
@@ -97,7 +138,6 @@ export default async function AdminHomepagePage() {
               <label className="eyebrow block mb-2">
                 Button text
               </label>
-
               <input
                 name="cta_text"
                 defaultValue={hero.cta_text}
@@ -109,7 +149,6 @@ export default async function AdminHomepagePage() {
               <label className="eyebrow block mb-2">
                 Button link
               </label>
-
               <input
                 name="cta_link"
                 defaultValue={hero.cta_link}
@@ -151,10 +190,6 @@ export default async function AdminHomepagePage() {
               accept="image/*,video/*"
               className="text-sm"
             />
-
-            <p className="text-xs text-sand mt-1">
-              Uploading a new file replaces the current one.
-            </p>
           </div>
 
           <button
@@ -174,7 +209,7 @@ export default async function AdminHomepagePage() {
 
         <p className="text-sand text-sm mb-8 max-w-xl">
           Use this section for a new collection, special offer,
-          campaign, or an extraordinary category.
+          campaign, or extraordinary category.
         </p>
 
         <form action={updateHero2} className="space-y-5 max-w-xl">
@@ -194,12 +229,10 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Eyebrow
             </label>
-
             <input
               name="eyebrow"
               defaultValue={hero2.eyebrow ?? "The New Season"}
               className={inputClass}
-              placeholder="The New Season"
             />
           </div>
 
@@ -207,15 +240,12 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Title
             </label>
-
             <input
               name="title"
               defaultValue={
-                hero2.title ??
-                "Made for the moments that matter."
+                hero2.title ?? "Made for the moments that matter."
               }
               className={inputClass}
-              placeholder="Your campaign title"
             />
           </div>
 
@@ -223,7 +253,6 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Subtitle
             </label>
-
             <textarea
               name="subtitle"
               defaultValue={
@@ -232,7 +261,6 @@ export default async function AdminHomepagePage() {
               }
               rows={3}
               className={inputClass}
-              placeholder="Short supporting text"
             />
           </div>
 
@@ -241,7 +269,6 @@ export default async function AdminHomepagePage() {
               <label className="eyebrow block mb-2">
                 Button text
               </label>
-
               <input
                 name="cta_text"
                 defaultValue={
@@ -255,7 +282,6 @@ export default async function AdminHomepagePage() {
               <label className="eyebrow block mb-2">
                 Button link
               </label>
-
               <input
                 name="cta_link"
                 defaultValue={
@@ -299,11 +325,6 @@ export default async function AdminHomepagePage() {
               accept="image/*,video/*"
               className="text-sm"
             />
-
-            <p className="text-xs text-sand mt-1">
-              Recommended: wide landscape image. Uploading a
-              new file replaces the current Hero 2 media.
-            </p>
           </div>
 
           <button
@@ -322,9 +343,8 @@ export default async function AdminHomepagePage() {
         </h2>
 
         <p className="text-sand text-sm mb-8 max-w-xl">
-          Use this for a new drop, sale, special offer, campaign,
-          or limited collection. The banner will remain hidden
-          from the homepage until an image or video is uploaded.
+          Use this for a new drop, offer, campaign, or seasonal promotion.
+          Leave the image empty if you do not want the banner displayed.
         </p>
 
         <form
@@ -349,10 +369,9 @@ export default async function AdminHomepagePage() {
             </label>
 
             <input
-              name="promo_eyebrow"
+              name="eyebrow"
               defaultValue={promo.eyebrow ?? "New Drop"}
               className={inputClass}
-              placeholder="New Drop"
             />
           </div>
 
@@ -362,50 +381,46 @@ export default async function AdminHomepagePage() {
             </label>
 
             <input
-              name="promo_title"
+              name="title"
               defaultValue={
-                promo.title ??
-                "Crafted for everyday confidence"
+                promo.title ?? "Crafted for everyday confidence"
               }
               className={inputClass}
-              placeholder="Promo title"
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="eyebrow block mb-2">
-                Button text
-              </label>
+          <div>
+            <label className="eyebrow block mb-2">
+              Button text
+            </label>
 
-              <input
-                name="promo_cta_text"
-                defaultValue={
-                  promo.cta_text ?? "Shop the collection"
-                }
-                className={inputClass}
-              />
-            </div>
+            <input
+              name="cta_text"
+              defaultValue={
+                promo.cta_text ?? "Shop the collection"
+              }
+              className={inputClass}
+            />
+          </div>
 
-            <div>
-              <label className="eyebrow block mb-2">
-                Button link
-              </label>
+          <div>
+            <label className="eyebrow block mb-2">
+              Button link
+            </label>
 
-              <input
-                name="promo_cta_link"
-                defaultValue={
-                  promo.cta_link ?? "/collections/new"
-                }
-                className={inputClass}
-              />
-            </div>
+            <input
+              name="cta_link"
+              defaultValue={
+                promo.cta_link ?? "/collections/new"
+              }
+              className={inputClass}
+            />
           </div>
 
           {promo.media_url && (
             <div>
               <label className="eyebrow block mb-2">
-                Current Promo Banner
+                Current promo image/video
               </label>
 
               {promo.media_type === "video" ? (
@@ -417,7 +432,7 @@ export default async function AdminHomepagePage() {
               ) : (
                 <img
                   src={promo.media_url}
-                  alt="Current Promo Banner"
+                  alt="Current promo"
                   className="w-64 aspect-video object-cover"
                 />
               )}
@@ -426,7 +441,7 @@ export default async function AdminHomepagePage() {
 
           <div>
             <label className="eyebrow block mb-2">
-              Upload Promo Banner photo or video
+              Upload promo image/video
             </label>
 
             <input
@@ -437,8 +452,8 @@ export default async function AdminHomepagePage() {
             />
 
             <p className="text-xs text-sand mt-1">
-              The Promo Banner will not appear on the homepage
-              until you upload a photo or video.
+              If no image is uploaded, the promo banner will not appear
+              on the homepage.
             </p>
           </div>
 
@@ -451,6 +466,233 @@ export default async function AdminHomepagePage() {
         </form>
       </section>
 
+      {/* FEATURED CATEGORIES */}
+      <section className="border-t border-hairline pt-14">
+        <h2 className="font-serif text-3xl font-light mb-2">
+          Homepage — Featured Categories
+        </h2>
+
+        <p className="text-sand text-sm mb-10 max-w-xl">
+          Edit the three collection tiles shown between the Promo Banner
+          and Hero 2 on the homepage.
+        </p>
+
+        <form
+          action={updateCategoryTiles}
+          className="space-y-12"
+        >
+          {/* CATEGORY 1 */}
+          <div className="max-w-xl">
+            <h3 className="font-serif text-xl mb-5">
+              Category 1
+            </h3>
+
+            {category1.image_url && (
+              <img
+                src={category1.image_url}
+                alt={category1.title}
+                className="w-full max-w-md aspect-[4/5] object-cover mb-5"
+              />
+            )}
+
+            <input
+              type="hidden"
+              name="category1_existing_image"
+              value={category1.image_url}
+            />
+
+            <div className="space-y-4">
+              <div>
+                <label className="eyebrow block mb-2">
+                  Small text
+                </label>
+                <input
+                  name="category1_eyebrow"
+                  defaultValue={category1.eyebrow}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Title
+                </label>
+                <input
+                  name="category1_title"
+                  defaultValue={category1.title}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Link
+                </label>
+                <input
+                  name="category1_link"
+                  defaultValue={category1.link}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Image
+                </label>
+                <input
+                  type="file"
+                  name="category1_image"
+                  accept="image/*"
+                  className="text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* CATEGORY 2 */}
+          <div className="max-w-xl border-t border-hairline pt-10">
+            <h3 className="font-serif text-xl mb-5">
+              Category 2
+            </h3>
+
+            {category2.image_url && (
+              <img
+                src={category2.image_url}
+                alt={category2.title}
+                className="w-full max-w-md aspect-[4/5] object-cover mb-5"
+              />
+            )}
+
+            <input
+              type="hidden"
+              name="category2_existing_image"
+              value={category2.image_url}
+            />
+
+            <div className="space-y-4">
+              <div>
+                <label className="eyebrow block mb-2">
+                  Small text
+                </label>
+                <input
+                  name="category2_eyebrow"
+                  defaultValue={category2.eyebrow}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Title
+                </label>
+                <input
+                  name="category2_title"
+                  defaultValue={category2.title}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Link
+                </label>
+                <input
+                  name="category2_link"
+                  defaultValue={category2.link}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Image
+                </label>
+                <input
+                  type="file"
+                  name="category2_image"
+                  accept="image/*"
+                  className="text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* CATEGORY 3 */}
+          <div className="max-w-xl border-t border-hairline pt-10">
+            <h3 className="font-serif text-xl mb-5">
+              Category 3
+            </h3>
+
+            {category3.image_url && (
+              <img
+                src={category3.image_url}
+                alt={category3.title}
+                className="w-full max-w-md aspect-[4/5] object-cover mb-5"
+              />
+            )}
+
+            <input
+              type="hidden"
+              name="category3_existing_image"
+              value={category3.image_url}
+            />
+
+            <div className="space-y-4">
+              <div>
+                <label className="eyebrow block mb-2">
+                  Small text
+                </label>
+                <input
+                  name="category3_eyebrow"
+                  defaultValue={category3.eyebrow}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Title
+                </label>
+                <input
+                  name="category3_title"
+                  defaultValue={category3.title}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Link
+                </label>
+                <input
+                  name="category3_link"
+                  defaultValue={category3.link}
+                  className={inputClass}
+                />
+              </div>
+
+              <div>
+                <label className="eyebrow block mb-2">
+                  Image
+                </label>
+                <input
+                  type="file"
+                  name="category3_image"
+                  accept="image/*"
+                  className="text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-wine hover:bg-wineDeep px-8 py-3 text-sm tracking-wide"
+          >
+            Save Featured Categories
+          </button>
+        </form>
+      </section>
     </div>
   );
 }
