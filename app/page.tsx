@@ -1,6 +1,5 @@
 import PromoBanner from "@/components/PromoBanner";
 import TrustStrip from "@/components/TrustStrip";
-import Footer from "@/components/Footer";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
@@ -199,7 +198,6 @@ export default async function HomePage() {
       <TrustStrip />
 
       {/* FOOTER */}
-      <Footer />
     </>
   );
 }
