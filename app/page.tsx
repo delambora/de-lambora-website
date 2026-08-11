@@ -4,7 +4,6 @@ import PromoBanner from "@/components/PromoBanner";
 import TrustStrip from "@/components/TrustStrip";
 import FadeIn from "@/components/FadeIn";
 import ProductCarousel from "@/components/ProductCarousel";
-import CategoryTiles from "@/components/CategoryTiles";
 import Hero2 from "@/components/Hero2";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +23,12 @@ export default async function HomePage() {
     .eq("key", "hero")
     .single();
 
+  const { data: categoryData } = await supabase
+    .from("site_content")
+    .select("value")
+    .eq("key", "homepage_categories")
+    .single();
+
   const hero = heroData?.value ?? {
     headline_line1: "Tailored for",
     headline_emphasis: "the unhurried.",
@@ -34,6 +39,46 @@ export default async function HomePage() {
     media_type: "image",
     media_url: null,
   };
+
+  const categoryDefaults = {
+    category1: {
+      eyebrow: "Collection",
+      title: "Shirts",
+      link: "/collections/shirts",
+      image_url: "",
+    },
+    category2: {
+      eyebrow: "Collection",
+      title: "T-Shirts",
+      link: "/collections/tees",
+      image_url: "",
+    },
+    category3: {
+      eyebrow: "Collection",
+      title: "Premium",
+      link: "/collections/premium",
+      image_url: "",
+    },
+  };
+
+  const savedCategories = categoryData?.value ?? {};
+
+  const category1 = {
+    ...categoryDefaults.category1,
+    ...(savedCategories.category1 ?? {}),
+  };
+
+  const category2 = {
+    ...categoryDefaults.category2,
+    ...(savedCategories.category2 ?? {}),
+  };
+
+  const category3 = {
+    ...categoryDefaults.category3,
+    ...(savedCategories.category3 ?? {}),
+  };
+
+  const categories = [category1, category2, category3];
 
   const productList = products ?? [];
 
@@ -79,7 +124,7 @@ export default async function HomePage() {
             </p>
 
             <a
-              href="#new-arrivals"
+              href={hero.cta_link || "#new-arrivals"}
               className="inline-block mt-7 w-fit border border-white/70 px-6 md:px-7 py-2.5 md:py-3 text-xs tracking-[0.15em] uppercase hover:bg-white hover:text-black transition-colors"
             >
               {hero.cta_text}
@@ -105,7 +150,7 @@ export default async function HomePage() {
           </p>
 
           <a
-            href="#new-arrivals"
+            href={hero.cta_link || "#new-arrivals"}
             className="inline-block mt-7 border border-hairline px-6 md:px-7 py-2.5 md:py-3 text-xs tracking-[0.15em] uppercase hover:border-bone transition-colors"
           >
             {hero.cta_text}
@@ -124,7 +169,53 @@ export default async function HomePage() {
             Find your fit
           </h2>
 
-          <CategoryTiles products={productList} />
+          {/* 
+            This remains your existing product-based
+            Shop by Category section.
+          */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
+            {[
+              { slug: "hoodies", label: "Hoodies" },
+              { slug: "sweatshirts", label: "Sweatshirts" },
+              { slug: "tees", label: "Tees" },
+              { slug: "polos", label: "Polos" },
+            ].map((cat) => {
+              const match = productList.find(
+                (p) =>
+                  p.category?.toLowerCase() ===
+                    cat.slug.replace(/s$/, "") ||
+                  p.category?.toLowerCase() === cat.slug
+              );
+
+              const img = match?.images?.[0] || null;
+
+              return (
+                <Link
+                  key={cat.slug}
+                  href={`/collections/${cat.slug}`}
+                  className="group block"
+                >
+                  <div className="aspect-[4/5] mb-3 overflow-hidden bg-bgElev">
+                    {img ? (
+                      <img
+                        src={img}
+                        alt={cat.label}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-sand text-xs font-mono">
+                        {cat.label}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="text-sm tracking-wide">
+                    {cat.label}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </section>
       </FadeIn>
 
@@ -179,71 +270,42 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {/* SHIRTS */}
-            <Link
-              href="/collections/shirts"
-              className="group relative aspect-[4/5] overflow-hidden bg-bgElev"
-            >
-              <div className="absolute inset-0 flex items-end p-6 md:p-8 z-10">
-                <div>
-                  <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">
-                    Collection
-                  </p>
+            {categories.map((category, index) => (
+              <Link
+                key={index}
+                href={category.link || "#"}
+                className="group relative aspect-[4/5] overflow-hidden bg-bgElev"
+              >
+                {/* IMAGE */}
+                {category.image_url ? (
+                  <img
+                    src={category.image_url}
+                    alt={category.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-bgElev" />
+                )}
 
-                  <h3 className="font-serif text-2xl md:text-3xl text-white font-light">
-                    Shirts
-                  </h3>
+                {/* DARK GRADIENT */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent z-[1]" />
+
+                {/* TEXT */}
+                <div className="absolute inset-0 flex items-end p-6 md:p-8 z-10">
+                  <div>
+                    {category.eyebrow && (
+                      <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">
+                        {category.eyebrow}
+                      </p>
+                    )}
+
+                    <h3 className="font-serif text-2xl md:text-3xl text-white font-light">
+                      {category.title}
+                    </h3>
+                  </div>
                 </div>
-              </div>
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-[1]" />
-
-              <div className="absolute inset-0 bg-bgElev transition-transform duration-700 group-hover:scale-[1.03]" />
-            </Link>
-
-            {/* TEES */}
-            <Link
-              href="/collections/tees"
-              className="group relative aspect-[4/5] overflow-hidden bg-bgElev"
-            >
-              <div className="absolute inset-0 flex items-end p-6 md:p-8 z-10">
-                <div>
-                  <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">
-                    Collection
-                  </p>
-
-                  <h3 className="font-serif text-2xl md:text-3xl text-white font-light">
-                    T-Shirts
-                  </h3>
-                </div>
-              </div>
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-[1]" />
-
-              <div className="absolute inset-0 bg-bgElev transition-transform duration-700 group-hover:scale-[1.03]" />
-            </Link>
-
-            {/* PREMIUM */}
-            <Link
-              href="/collections/premium"
-              className="group relative aspect-[4/5] overflow-hidden bg-bgElev"
-            >
-              <div className="absolute inset-0 flex items-end p-6 md:p-8 z-10">
-                <div>
-                  <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">
-                    Collection
-                  </p>
-
-                  <h3 className="font-serif text-2xl md:text-3xl text-white font-light">
-                    Premium
-                  </h3>
-                </div>
-              </div>
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-[1]" />
-
-              <div className="absolute inset-0 bg-bgElev transition-transform duration-700 group-hover:scale-[1.03]" />
-            </Link>
+              </Link>
+            ))}
           </div>
         </section>
       </FadeIn>
