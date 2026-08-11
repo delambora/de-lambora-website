@@ -1,4 +1,3 @@
-```tsx
 import { createClient } from "@/lib/supabase/server";
 import CropUpload from "@/components/CropUpload";
 
@@ -757,4 +756,3 @@ export default async function AdminHomepagePage() {
     </div>
   );
 }
-```
