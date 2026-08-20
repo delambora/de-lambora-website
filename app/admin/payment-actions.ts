@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { priceCart } from "@/lib/pricing";
 
 async function assertAdmin() {
   const supabase = createClient();
@@ -68,10 +69,11 @@ export async function createManualOrder(formData: FormData) {
     redirect("/login?next=/checkout");
   }
 
-  const subtotal = Number(formData.get("subtotal"));
-  const shipping = Number(formData.get("shipping"));
-  const total = Number(formData.get("total"));
-  const items = JSON.parse(String(formData.get("items")));
+  const rawItems = JSON.parse(String(formData.get("items")));
+
+  // Re-price from the DB — never trust subtotal/shipping/total/item.price
+  // coming from the form, since this is a plain (unsigned) client submission.
+  const priced = await priceCart(rawItems);
 
   const { data: order, error: orderError } = await supabase
     .from("orders")
@@ -80,9 +82,9 @@ export async function createManualOrder(formData: FormData) {
       status: "pending",
       payment_method: "manual",
       verification_status: "pending",
-      subtotal,
-      shipping,
-      total,
+      subtotal: priced.subtotal,
+      shipping: priced.shipping,
+      total: priced.total,
       full_name: String(formData.get("fullName")),
       phone: String(formData.get("phone")),
       address_line1: String(formData.get("line1")),
@@ -96,7 +98,7 @@ export async function createManualOrder(formData: FormData) {
 
   if (orderError) throw new Error(orderError.message);
 
-  const orderItems = items.map((item: any) => ({
+  const orderItems = priced.items.map((item) => ({
     order_id: order.id,
     product_id: item.productId,
     product_name: item.name,

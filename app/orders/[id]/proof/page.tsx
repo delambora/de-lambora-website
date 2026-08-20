@@ -11,7 +11,7 @@ export default function PaymentProofPage({
   searchParams: { error?: string };
 }) {
   return (
-    <div className="px-12 py-16 max-w-lg">
+    <div className="px-5 md:px-12 py-10 md:py-16 max-w-lg">
       <div className="eyebrow mb-2">Almost done</div>
       <h1 className="font-serif text-3xl font-light mb-8">Confirm your payment</h1>
 

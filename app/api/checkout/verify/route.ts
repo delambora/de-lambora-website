@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createClient } from "@/lib/supabase/server";
+import { priceCart } from "@/lib/pricing";
 import { pushOrder, autoAssignOrder } from "@/lib/shipmozo";
 
 export async function POST(req: Request) {
@@ -9,9 +10,6 @@ export async function POST(req: Request) {
     razorpay_order_id,
     razorpay_payment_id,
     razorpay_signature,
-    subtotal,
-    shipping,
-    total,
     address,
     items
   } = body;
@@ -23,6 +21,16 @@ export async function POST(req: Request) {
 
   if (expectedSignature !== razorpay_signature) {
     return NextResponse.json({ error: "Payment signature mismatch" }, { status: 400 });
+  }
+
+  // Re-price the cart from the DB rather than trusting subtotal/shipping/total
+  // or any item.price sent by the client — the client only pays for whatever
+  // amount create-order computed, but the order record must reflect real prices.
+  let priced;
+  try {
+    priced = await priceCart(items);
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message || "Could not price cart" }, { status: 400 });
   }
 
   const supabase = createClient();
@@ -41,9 +49,9 @@ export async function POST(req: Request) {
       razorpay_order_id,
       razorpay_payment_id,
       status: "paid",
-      subtotal,
-      shipping,
-      total,
+      subtotal: priced.subtotal,
+      shipping: priced.shipping,
+      total: priced.total,
       full_name: address.fullName,
       phone: address.phone,
       address_line1: address.line1,
@@ -59,7 +67,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: orderError.message }, { status: 500 });
   }
 
-  const orderItems = items.map((item: any) => ({
+  const orderItems = priced.items.map((item) => ({
     order_id: order.id,
     product_id: item.productId,
     product_name: item.name,
@@ -80,7 +88,7 @@ export async function POST(req: Request) {
   // the customer's payment/order still succeeds — shipping can be retried
   // manually later without redoing the payment.
   try {
-    const totalWeight = items.reduce((sum: number, item: any) => sum + item.qty * 300, 0);
+    const totalWeight = priced.items.reduce((sum, item) => sum + item.qty * 300, 0);
 
     await pushOrder({
       order_id: order.id,
@@ -92,7 +100,7 @@ export async function POST(req: Request) {
       consignee_pin_code: Number(address.pincode),
       consignee_city: address.city,
       consignee_state: address.state,
-      product_detail: items.map((item: any) => ({
+      product_detail: priced.items.map((item) => ({
         name: `${item.name} (${item.color}, ${item.size})`,
         sku_number: item.productId,
         quantity: item.qty,

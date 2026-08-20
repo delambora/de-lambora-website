@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function OrderPendingPage() {
   return (
-    <div className="px-12 py-24 max-w-lg text-center mx-auto">
+    <div className="px-5 md:px-12 py-16 md:py-24 max-w-lg text-center mx-auto">
       <div className="eyebrow mb-3">Submitted</div>
       <h1 className="font-serif text-3xl font-light mb-5">Thanks — we're verifying your payment</h1>
       <p className="text-sm text-sand leading-relaxed mb-8">

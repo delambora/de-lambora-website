@@ -9,7 +9,7 @@ export default function CartPage() {
   const total = subtotal + shipping;
 
   return (
-    <div className="grid md:grid-cols-[1.5fr_1fr] gap-14 px-12 py-16 items-start">
+    <div className="grid md:grid-cols-[1.5fr_1fr] gap-8 md:gap-14 px-5 md:px-12 py-10 md:py-16 items-start">
       <div>
         <h1 className="font-serif text-3xl font-light mb-8">Your bag</h1>
         {items.length === 0 && (

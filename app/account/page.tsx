@@ -52,8 +52,8 @@ export default function AccountPage() {
   if (loading) return null;
 
   return (
-    <div className="px-12 py-16 max-w-2xl">
-      <div className="flex items-center justify-between mb-10">
+    <div className="px-5 md:px-12 py-10 md:py-16 max-w-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
         <div>
           <div className="eyebrow mb-2">Account</div>
           <h1 className="font-serif text-3xl font-light">{user?.user_metadata?.full_name || user?.email}</h1>

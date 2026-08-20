@@ -16,7 +16,7 @@ export default async function AboutPage() {
   const paragraphs = String(about.body || "").split("\n\n").filter(Boolean);
 
   return (
-    <div className="grid md:grid-cols-2 gap-16 px-12 py-20 items-start">
+    <div className="grid md:grid-cols-2 gap-10 md:gap-16 px-5 md:px-12 py-12 md:py-20 items-start">
       <div>
         <div className="aspect-[4/5] w-full overflow-hidden bg-bgElev flex items-center justify-center">
           {about.image_url ? (

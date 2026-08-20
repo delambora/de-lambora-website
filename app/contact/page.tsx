@@ -9,7 +9,7 @@ export default function ContactPage({
   searchParams: { sent?: string; error?: string };
 }) {
   return (
-    <div className="grid md:grid-cols-2 gap-16 px-12 py-20 items-start">
+    <div className="grid md:grid-cols-2 gap-10 md:gap-16 px-5 md:px-12 py-12 md:py-20 items-start">
       <div>
         <div className="eyebrow mb-4">Contact</div>
         <h1 className="font-serif text-4xl font-light mb-8">Get in touch</h1>
@@ -37,7 +37,7 @@ export default function ContactPage({
 
           <div>
             <div className="eyebrow mb-1">WhatsApp</div>
-            <a
+            
               href="https://wa.me/917708920031"
               target="_blank"
               rel="noopener noreferrer"

@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
+import { priceCart } from "@/lib/pricing";
 
 export async function POST(req: Request) {
-  const { amount } = await req.json();
+  const { items } = await req.json();
 
-  if (!amount || amount <= 0) {
+  let priced;
+  try {
+    priced = await priceCart(items);
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message || "Could not price cart" }, { status: 400 });
+  }
+
+  if (priced.total <= 0) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
@@ -18,7 +26,7 @@ export async function POST(req: Request) {
       Authorization: `Basic ${auth}`
     },
     body: JSON.stringify({
-      amount: Math.round(amount * 100), // paise
+      amount: Math.round(priced.total * 100), // paise — computed server-side from DB prices
       currency: "INR",
       receipt: `order_${Date.now()}`
     })
@@ -30,5 +38,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: data.error?.description || "Razorpay error" }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  // Return the verified breakdown alongside the Razorpay order so the client
+  // can reconcile its (untrusted) local total with what will actually be charged.
+  return NextResponse.json({
+    ...data,
+    subtotal: priced.subtotal,
+    shipping: priced.shipping,
+    total: priced.total
+  });
 }

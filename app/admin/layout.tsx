@@ -16,9 +16,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen">
-      <div className="border-b border-hairline px-12 py-5 flex items-center justify-between">
+      <div className="border-b border-hairline px-5 md:px-12 py-5 flex flex-col gap-4 sm:flex-row sm:items-center justify-between">
         <div className="eyebrow">De Lambora — Admin</div>
-        <nav className="flex gap-6 text-sm font-mono flex-wrap">
+        <nav className="flex gap-4 md:gap-6 text-sm font-mono flex-wrap">
           <Link href="/admin" className="text-sand hover:text-bone">Products</Link>
           <Link href="/admin/products/new" className="text-sand hover:text-bone">+ New product</Link>
           <Link href="/admin/homepage" className="text-sand hover:text-bone">Homepage</Link>
@@ -28,7 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/" className="text-sand hover:text-bone">View site</Link>
         </nav>
       </div>
-      <div className="px-12 py-10">{children}</div>
+      <div className="px-5 md:px-12 py-6 md:py-10 overflow-x-auto">{children}</div>
     </div>
   );
 }

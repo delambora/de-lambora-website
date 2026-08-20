@@ -69,10 +69,19 @@ export default function CheckoutPage() {
       const orderRes = await fetch("/api/checkout/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: total })
+        body: JSON.stringify({
+          items: items.map((i) => ({
+            productId: i.productId,
+            qty: i.qty,
+            color: i.color,
+            size: i.size
+          }))
+        })
       });
       const orderData = await orderRes.json();
       if (!orderRes.ok) throw new Error(orderData.error || "Could not start payment");
+      // orderData.amount (paise) is what the server actually computed from
+      // current DB prices and will charge — used below, not the local `total`.
 
       const rzp = new (window as any).Razorpay({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -91,11 +100,13 @@ export default function CheckoutPage() {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              subtotal,
-              shipping,
-              total,
               address: form,
-              items
+              items: items.map((i) => ({
+                productId: i.productId,
+                qty: i.qty,
+                color: i.color,
+                size: i.size
+              }))
             })
           });
           const verifyData = await verifyRes.json();
@@ -128,7 +139,7 @@ export default function CheckoutPage() {
   return (
     <>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <div className="grid md:grid-cols-[1.4fr_1fr] gap-14 px-12 py-16 items-start">
+      <div className="grid md:grid-cols-[1.4fr_1fr] gap-8 md:gap-14 px-5 md:px-12 py-10 md:py-16 items-start">
         <div>
           <h1 className="font-serif text-3xl font-light mb-8">Delivery address</h1>
 
@@ -226,10 +237,13 @@ export default function CheckoutPage() {
                 <input type="hidden" name="city" value={form.city} />
                 <input type="hidden" name="state" value={form.state} />
                 <input type="hidden" name="pincode" value={form.pincode} />
-                <input type="hidden" name="subtotal" value={subtotal} />
-                <input type="hidden" name="shipping" value={shipping} />
-                <input type="hidden" name="total" value={total} />
-                <input type="hidden" name="items" value={JSON.stringify(items)} />
+                <input
+                  type="hidden"
+                  name="items"
+                  value={JSON.stringify(
+                    items.map((i) => ({ productId: i.productId, qty: i.qty, color: i.color, size: i.size }))
+                  )}
+                />
                 <button className="w-full bg-wine hover:bg-wineDeep py-4 text-sm tracking-wide">
                   I've paid — continue
                 </button>
