@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import CropUpload from "@/components/CropUpload";
-
+import HomepagePreview from "@/components/admin/HomepagePreview";
 import {
   updateHero,
   updateHero2,
@@ -82,17 +82,19 @@ export default async function AdminHomepagePage() {
   return (
     <div className="space-y-16">
 
-      {/* ========================================================= */}
-      {/* HERO 1 */}
-      {/* ========================================================= */}
+      <h1 className="font-serif text-3xl font-light">
+        Homepage
+      </h1>
 
+      <HomepagePreview />
+
+      {/* HERO 1 */}
       <section>
-        <h1 className="font-serif text-3xl font-light mb-8">
-          Homepage — Hero section
-        </h1>
+        <h2 className="font-serif text-2xl font-light mb-8">
+          Hero section
+        </h2>
 
         <form action={updateHero} className="space-y-5 max-w-xl">
-
           <input
             type="hidden"
             name="existingMediaUrl"
@@ -109,10 +111,9 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Headline — line 1
             </label>
-
             <input
               name="headline_line1"
-              defaultValue={hero.headline_line1 ?? ""}
+              defaultValue={hero.headline_line1}
               className={inputClass}
             />
           </div>
@@ -121,10 +122,9 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Headline — emphasis
             </label>
-
             <input
               name="headline_emphasis"
-              defaultValue={hero.headline_emphasis ?? ""}
+              defaultValue={hero.headline_emphasis}
               className={inputClass}
             />
           </div>
@@ -133,25 +133,22 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Subtext
             </label>
-
             <textarea
               name="subtext"
-              defaultValue={hero.subtext ?? ""}
+              defaultValue={hero.subtext}
               rows={3}
               className={inputClass}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-
             <div>
               <label className="eyebrow block mb-2">
                 Button text
               </label>
-
               <input
                 name="cta_text"
-                defaultValue={hero.cta_text ?? ""}
+                defaultValue={hero.cta_text}
                 className={inputClass}
               />
             </div>
@@ -160,14 +157,12 @@ export default async function AdminHomepagePage() {
               <label className="eyebrow block mb-2">
                 Button link
               </label>
-
               <input
                 name="cta_link"
-                defaultValue={hero.cta_link ?? ""}
+                defaultValue={hero.cta_link}
                 className={inputClass}
               />
             </div>
-
           </div>
 
           {hero.media_url && (
@@ -192,11 +187,18 @@ export default async function AdminHomepagePage() {
             </div>
           )}
 
-          <CropUpload
-            name="media"
-            label="Upload new hero image"
-            aspectRatio={16 / 9}
-          />
+          <div>
+            <label className="eyebrow block mb-2">
+              Upload new photo or video
+            </label>
+
+            <input
+              type="file"
+              name="media"
+              accept="image/*,video/*"
+              className="text-sm"
+            />
+          </div>
 
           <button
             type="submit"
@@ -204,19 +206,13 @@ export default async function AdminHomepagePage() {
           >
             Save Hero
           </button>
-
         </form>
       </section>
 
-
-      {/* ========================================================= */}
       {/* HERO 2 */}
-      {/* ========================================================= */}
-
       <section className="border-t border-hairline pt-14">
-
-        <h2 className="font-serif text-3xl font-light mb-2">
-          Homepage — Hero 2
+        <h2 className="font-serif text-2xl font-light mb-2">
+          Hero 2
         </h2>
 
         <p className="text-sand text-sm mb-8 max-w-xl">
@@ -225,7 +221,6 @@ export default async function AdminHomepagePage() {
         </p>
 
         <form action={updateHero2} className="space-y-5 max-w-xl">
-
           <input
             type="hidden"
             name="existingHero2MediaUrl"
@@ -242,7 +237,6 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Eyebrow
             </label>
-
             <input
               name="eyebrow"
               defaultValue={hero2.eyebrow ?? "The New Season"}
@@ -254,12 +248,10 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Title
             </label>
-
             <input
               name="title"
               defaultValue={
-                hero2.title ??
-                "Made for the moments that matter."
+                hero2.title ?? "Made for the moments that matter."
               }
               className={inputClass}
             />
@@ -269,7 +261,6 @@ export default async function AdminHomepagePage() {
             <label className="eyebrow block mb-2">
               Subtitle
             </label>
-
             <textarea
               name="subtitle"
               defaultValue={
@@ -282,17 +273,14 @@ export default async function AdminHomepagePage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-
             <div>
               <label className="eyebrow block mb-2">
                 Button text
               </label>
-
               <input
                 name="cta_text"
                 defaultValue={
-                  hero2.cta_text ??
-                  "Explore the collection"
+                  hero2.cta_text ?? "Explore the collection"
                 }
                 className={inputClass}
               />
@@ -302,17 +290,14 @@ export default async function AdminHomepagePage() {
               <label className="eyebrow block mb-2">
                 Button link
               </label>
-
               <input
                 name="cta_link"
                 defaultValue={
-                  hero2.cta_link ??
-                  "/collections/new"
+                  hero2.cta_link ?? "/collections/new"
                 }
                 className={inputClass}
               />
             </div>
-
           </div>
 
           {hero2.media_url && (
@@ -337,11 +322,18 @@ export default async function AdminHomepagePage() {
             </div>
           )}
 
-          <CropUpload
-            name="hero2Media"
-            label="Upload Hero 2 image"
-            aspectRatio={16 / 9}
-          />
+          <div>
+            <label className="eyebrow block mb-2">
+              Upload Hero 2 photo or video
+            </label>
+
+            <input
+              type="file"
+              name="hero2Media"
+              accept="image/*,video/*"
+              className="text-sm"
+            />
+          </div>
 
           <button
             type="submit"
@@ -349,19 +341,13 @@ export default async function AdminHomepagePage() {
           >
             Save Hero 2
           </button>
-
         </form>
       </section>
 
-
-      {/* ========================================================= */}
       {/* PROMO BANNER */}
-      {/* ========================================================= */}
-
       <section className="border-t border-hairline pt-14">
-
-        <h2 className="font-serif text-3xl font-light mb-2">
-          Homepage — Promo Banner
+        <h2 className="font-serif text-2xl font-light mb-2">
+          Promo Banner
         </h2>
 
         <p className="text-sand text-sm mb-8 max-w-xl">
@@ -373,7 +359,6 @@ export default async function AdminHomepagePage() {
           action={updatePromoBanner}
           className="space-y-5 max-w-xl"
         >
-
           <input
             type="hidden"
             name="existingPromoMediaUrl"
@@ -406,8 +391,7 @@ export default async function AdminHomepagePage() {
             <input
               name="title"
               defaultValue={
-                promo.title ??
-                "Crafted for everyday confidence"
+                promo.title ?? "Crafted for everyday confidence"
               }
               className={inputClass}
             />
@@ -421,8 +405,7 @@ export default async function AdminHomepagePage() {
             <input
               name="cta_text"
               defaultValue={
-                promo.cta_text ??
-                "Shop the collection"
+                promo.cta_text ?? "Shop the collection"
               }
               className={inputClass}
             />
@@ -436,8 +419,7 @@ export default async function AdminHomepagePage() {
             <input
               name="cta_link"
               defaultValue={
-                promo.cta_link ??
-                "/collections/new"
+                promo.cta_link ?? "/collections/new"
               }
               className={inputClass}
             />
@@ -465,16 +447,23 @@ export default async function AdminHomepagePage() {
             </div>
           )}
 
-          <CropUpload
-            name="promoMedia"
-            label="Upload promo image"
-            aspectRatio={16 / 9}
-          />
+          <div>
+            <label className="eyebrow block mb-2">
+              Upload promo image/video
+            </label>
 
-          <p className="text-xs text-sand">
-            The image will be positioned and cropped to fit
-            the promo banner before uploading.
-          </p>
+            <input
+              type="file"
+              name="promoMedia"
+              accept="image/*,video/*"
+              className="text-sm"
+            />
+
+            <p className="text-xs text-sand mt-1">
+              If no image is uploaded, the promo banner will not appear
+              on the homepage.
+            </p>
+          </div>
 
           <button
             type="submit"
@@ -482,53 +471,36 @@ export default async function AdminHomepagePage() {
           >
             Save Promo Banner
           </button>
-
         </form>
       </section>
 
-
-      {/* ========================================================= */}
       {/* FEATURED CATEGORIES */}
-      {/* ========================================================= */}
-
       <section className="border-t border-hairline pt-14">
-
-        <h2 className="font-serif text-3xl font-light mb-2">
-          Homepage — Featured Categories
+        <h2 className="font-serif text-2xl font-light mb-2">
+          Featured Categories
         </h2>
 
         <p className="text-sand text-sm mb-10 max-w-xl">
-          Edit the three collection tiles shown between the
-          Promo Banner and Hero 2 on the homepage.
+          Edit the three collection tiles shown between the Promo Banner
+          and Hero 2 on the homepage.
         </p>
 
         <form
           action={updateCategoryTiles}
           className="space-y-12"
         >
-
           {/* CATEGORY 1 */}
-
           <div className="max-w-xl">
-
             <h3 className="font-serif text-xl mb-5">
               Category 1
             </h3>
 
             {category1.image_url && (
-              <div className="mb-5">
-
-                <label className="eyebrow block mb-2">
-                  Current image
-                </label>
-
-                <img
-                  src={category1.image_url}
-                  alt={category1.title}
-                  className="w-full max-w-md aspect-[4/5] object-cover"
-                />
-
-              </div>
+              <img
+                src={category1.image_url}
+                alt={category1.title}
+                className="w-full max-w-md aspect-[4/5] object-cover mb-5"
+              />
             )}
 
             <input
@@ -538,12 +510,10 @@ export default async function AdminHomepagePage() {
             />
 
             <div className="space-y-4">
-
               <div>
                 <label className="eyebrow block mb-2">
                   Small text
                 </label>
-
                 <input
                   name="category1_eyebrow"
                   defaultValue={category1.eyebrow}
@@ -555,7 +525,6 @@ export default async function AdminHomepagePage() {
                 <label className="eyebrow block mb-2">
                   Title
                 </label>
-
                 <input
                   name="category1_title"
                   defaultValue={category1.title}
@@ -567,7 +536,6 @@ export default async function AdminHomepagePage() {
                 <label className="eyebrow block mb-2">
                   Link
                 </label>
-
                 <input
                   name="category1_link"
                   defaultValue={category1.link}
@@ -575,38 +543,32 @@ export default async function AdminHomepagePage() {
                 />
               </div>
 
-              <CropUpload
-                name="category1_image"
-                label="Upload Category 1 image"
-                aspectRatio={4 / 5}
-              />
-
+              <div>
+                <label className="eyebrow block mb-2">
+                  Image
+                </label>
+                <input
+                  type="file"
+                  name="category1_image"
+                  accept="image/*"
+                  className="text-sm"
+                />
+              </div>
             </div>
           </div>
 
-
           {/* CATEGORY 2 */}
-
           <div className="max-w-xl border-t border-hairline pt-10">
-
             <h3 className="font-serif text-xl mb-5">
               Category 2
             </h3>
 
             {category2.image_url && (
-              <div className="mb-5">
-
-                <label className="eyebrow block mb-2">
-                  Current image
-                </label>
-
-                <img
-                  src={category2.image_url}
-                  alt={category2.title}
-                  className="w-full max-w-md aspect-[4/5] object-cover"
-                />
-
-              </div>
+              <img
+                src={category2.image_url}
+                alt={category2.title}
+                className="w-full max-w-md aspect-[4/5] object-cover mb-5"
+              />
             )}
 
             <input
@@ -616,12 +578,10 @@ export default async function AdminHomepagePage() {
             />
 
             <div className="space-y-4">
-
               <div>
                 <label className="eyebrow block mb-2">
                   Small text
                 </label>
-
                 <input
                   name="category2_eyebrow"
                   defaultValue={category2.eyebrow}
@@ -633,7 +593,6 @@ export default async function AdminHomepagePage() {
                 <label className="eyebrow block mb-2">
                   Title
                 </label>
-
                 <input
                   name="category2_title"
                   defaultValue={category2.title}
@@ -645,7 +604,6 @@ export default async function AdminHomepagePage() {
                 <label className="eyebrow block mb-2">
                   Link
                 </label>
-
                 <input
                   name="category2_link"
                   defaultValue={category2.link}
@@ -653,38 +611,32 @@ export default async function AdminHomepagePage() {
                 />
               </div>
 
-              <CropUpload
-                name="category2_image"
-                label="Upload Category 2 image"
-                aspectRatio={4 / 5}
-              />
-
+              <div>
+                <label className="eyebrow block mb-2">
+                  Image
+                </label>
+                <input
+                  type="file"
+                  name="category2_image"
+                  accept="image/*"
+                  className="text-sm"
+                />
+              </div>
             </div>
           </div>
 
-
           {/* CATEGORY 3 */}
-
           <div className="max-w-xl border-t border-hairline pt-10">
-
             <h3 className="font-serif text-xl mb-5">
               Category 3
             </h3>
 
             {category3.image_url && (
-              <div className="mb-5">
-
-                <label className="eyebrow block mb-2">
-                  Current image
-                </label>
-
-                <img
-                  src={category3.image_url}
-                  alt={category3.title}
-                  className="w-full max-w-md aspect-[4/5] object-cover"
-                />
-
-              </div>
+              <img
+                src={category3.image_url}
+                alt={category3.title}
+                className="w-full max-w-md aspect-[4/5] object-cover mb-5"
+              />
             )}
 
             <input
@@ -694,12 +646,10 @@ export default async function AdminHomepagePage() {
             />
 
             <div className="space-y-4">
-
               <div>
                 <label className="eyebrow block mb-2">
                   Small text
                 </label>
-
                 <input
                   name="category3_eyebrow"
                   defaultValue={category3.eyebrow}
@@ -711,7 +661,6 @@ export default async function AdminHomepagePage() {
                 <label className="eyebrow block mb-2">
                   Title
                 </label>
-
                 <input
                   name="category3_title"
                   defaultValue={category3.title}
@@ -723,7 +672,6 @@ export default async function AdminHomepagePage() {
                 <label className="eyebrow block mb-2">
                   Link
                 </label>
-
                 <input
                   name="category3_link"
                   defaultValue={category3.link}
@@ -731,17 +679,19 @@ export default async function AdminHomepagePage() {
                 />
               </div>
 
-              <CropUpload
-                name="category3_image"
-                label="Upload Category 3 image"
-                aspectRatio={4 / 5}
-              />
-
+              <div>
+                <label className="eyebrow block mb-2">
+                  Image
+                </label>
+                <input
+                  type="file"
+                  name="category3_image"
+                  accept="image/*"
+                  className="text-sm"
+                />
+              </div>
             </div>
           </div>
-
-
-          {/* SAVE ALL CATEGORIES */}
 
           <button
             type="submit"
@@ -749,10 +699,8 @@ export default async function AdminHomepagePage() {
           >
             Save Featured Categories
           </button>
-
         </form>
       </section>
-
     </div>
   );
 }
