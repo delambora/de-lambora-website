@@ -1,12 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
-@tailwind base;
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  background: #1C1916;
-  color: #F3EEE3;
+  background: #FBF7F0;
+  color: #201C17;
 }
 
 .eyebrow {
@@ -22,3 +20,41 @@ body {
   border-bottom: 1px dotted rgba(243,238,227,0.14);
   transform: translateY(-4px);
 }
+
+.marquee-track {
+  animation: marquee-scroll 22s linear infinite;
+  width: max-content;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+/* Headings across the site use a light font-weight, which reads elegant on
+   a dark background but looks thin and washed out on a light one. This
+   bumps them all up one weight, site-wide, from a single place. */
+.font-light {
+  font-weight: 450 !important;
+}
+/* Scales all text sizes up slightly across the whole site, since Tailwind's
+   text sizes are relative to the root font-size. */
+/* Slightly bigger text on desktop only — mobile stays at normal size */
+@media (min-width: 768px) {
+  html {
+    font-size: 107.5%;
+  }
+}
+/* Add to the end of app/globals.css — hides the scrollbar on the product
+   carousel while keeping it swipeable/scrollable */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+

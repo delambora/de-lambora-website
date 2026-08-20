@@ -1,79 +1,64 @@
-"use client";
+import { createClient } from "@/lib/supabase/server";
+import { updatePaymentDetails } from "../payment-actions";
 
-import Link from "next/link";
-import { useCart } from "@/lib/cart-context";
+const inputClass =
+  "w-full bg-transparent border border-hairline px-3 py-3 text-sm focus:outline-none focus:border-wineLight";
 
-export default function CartPage() {
-  const { items, removeItem, setQty, subtotal } = useCart();
-  const shipping = subtotal > 3000 || subtotal === 0 ? 0 : 150;
-  const total = subtotal + shipping;
+export default async function AdminPaymentDetailsPage() {
+  const supabase = createClient();
+  const { data } = await supabase.from("site_content").select("value").eq("key", "payment_details").single();
+
+  const details = data?.value ?? {};
 
   return (
-    <div className="grid md:grid-cols-[1.5fr_1fr] gap-14 px-12 py-16 items-start">
-      <div>
-        <h1 className="font-serif text-3xl font-light mb-8">Your bag</h1>
+    <div>
+      <h1 className="font-serif text-3xl font-light mb-8">Payment details (UPI / Bank Transfer)</h1>
+      <p className="text-sm text-sand mb-8 max-w-lg">
+        These show to customers who choose "Pay via UPI/Bank Transfer" at checkout, instead of
+        Razorpay. Leave blank until you're ready — the option just won't be fully usable until filled in.
+      </p>
 
-        {items.length === 0 && (
-          <p className="text-sand text-sm">
-            Your bag is empty. <Link href="/" className="underline">Continue shopping</Link>
-          </p>
+      <form action={updatePaymentDetails} className="space-y-5 max-w-xl">
+        <input type="hidden" name="existingQrUrl" value={details.qr_code_url ?? ""} />
+
+        <div>
+          <label className="eyebrow block mb-2">UPI ID</label>
+          <input name="upi_id" defaultValue={details.upi_id} placeholder="yourname@okhdfcbank" className={inputClass} />
+        </div>
+
+        <div>
+          <label className="eyebrow block mb-2">Account holder name</label>
+          <input name="account_holder_name" defaultValue={details.account_holder_name} className={inputClass} />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="eyebrow block mb-2">Account number</label>
+            <input name="account_number" defaultValue={details.account_number} className={inputClass} />
+          </div>
+          <div>
+            <label className="eyebrow block mb-2">IFSC code</label>
+            <input name="ifsc_code" defaultValue={details.ifsc_code} className={inputClass} />
+          </div>
+        </div>
+
+        {details.qr_code_url && (
+          <div>
+            <label className="eyebrow block mb-2">Current QR code</label>
+            <img src={details.qr_code_url} className="w-48 h-48 object-contain bg-bgElev p-2" />
+          </div>
         )}
 
-        {items.map((item, i) => (
-          <div key={i} className="grid grid-cols-[80px_1fr_auto] gap-4 py-5 border-b border-hairline">
-            <div className="w-20 h-24 flex items-center justify-center" style={{ background: item.imageBg }}>
-              <svg viewBox="0 0 100 100" fill="none" stroke="#F3EEE3" strokeWidth="1.6" className="w-3/5 h-3/5">
-                <path d="M35 20 L50 14 L65 20 L65 82 L35 82 Z" />
-              </svg>
-            </div>
-            <div>
-              <div className="font-serif text-base mb-1">{item.name}</div>
-              <div className="font-mono text-xs text-sand mb-2.5">
-                {item.color.toUpperCase()} · SIZE {item.size}
-              </div>
-              <div className="flex items-center border border-hairline w-fit">
-                <button onClick={() => setQty(i, item.qty - 1)} className="w-8 h-8">−</button>
-                <span className="w-8 text-center font-mono text-sm">{item.qty}</span>
-                <button onClick={() => setQty(i, item.qty + 1)} className="w-8 h-8">+</button>
-              </div>
-            </div>
-            <div className="text-right flex flex-col justify-between items-end">
-              <div className="font-mono text-sm">
-                ₹{(item.price * item.qty).toLocaleString("en-IN")}
-              </div>
-              <button
-                onClick={() => removeItem(i)}
-                className="text-xs font-mono text-sand hover:text-wineLight"
-              >
-                Remove
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {items.length > 0 && (
-        <div className="bg-bgElev p-7">
-          <div className="eyebrow mb-4">Order summary</div>
-          <div className="flex justify-between text-sm text-sand py-2">
-            <span>Subtotal</span>
-            <span>₹{subtotal.toLocaleString("en-IN")}</span>
-          </div>
-          <div className="flex justify-between text-sm text-sand py-2">
-            <span>Shipping</span>
-            <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
-          </div>
-          <div className="flex justify-between text-base font-mono border-t border-hairline mt-2 pt-4">
-            <span>Total</span>
-            <span>₹{total.toLocaleString("en-IN")}</span>
-          </div>
-          <Link href="/checkout">
-            <button className="w-full bg-wine hover:bg-wineDeep py-4 text-sm tracking-wide mt-6">
-              Checkout →
-            </button>
-          </Link>
+        <div>
+          <label className="eyebrow block mb-2">Upload QR code image</label>
+          <input type="file" name="qr_code" accept="image/*" className="text-sm" />
+          <p className="text-xs text-sand mt-1">
+            A screenshot of your UPI app's "My QR Code" screen works well. Uploading a new one replaces the current one.
+          </p>
         </div>
-      )}
+
+        <button className="bg-wine hover:bg-wineDeep px-8 py-3 text-sm tracking-wide">Save changes</button>
+      </form>
     </div>
   );
 }

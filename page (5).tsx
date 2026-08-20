@@ -1,92 +1,48 @@
-"use client";
+import { setupWarehouse } from "./shipmozo-setup-actions";
 
-import { useState } from "react";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-
-export default function SignupPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [done, setDone] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const supabase = createClient();
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: name } }
-    });
-    setLoading(false);
-    if (error) setError(error.message);
-    else setDone(true);
-  }
-
-  if (done) {
-    return (
-      <div className="max-w-sm mx-auto px-6 py-24 text-center">
-        <h1 className="font-serif text-2xl font-light mb-3">Check your email</h1>
-        <p className="text-sand text-sm">
-          We've sent a confirmation link to {email}. Confirm it, then sign in.
-        </p>
-        <Link href="/login" className="underline text-sm mt-6 inline-block">Go to sign in</Link>
-      </div>
-    );
-  }
-
+export default function ShipmozoSetupPage({
+  searchParams
+}: {
+  searchParams: { warehouse_id?: string; error?: string };
+}) {
   return (
-    <div className="max-w-sm mx-auto px-6 py-24">
-      <h1 className="font-serif text-3xl font-light mb-2">Create account</h1>
-      <p className="text-sand text-sm mb-8">Join De Lambora.</p>
+    <div>
+      <h1 className="font-serif text-3xl font-light mb-8">ShipMozo setup</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="font-mono text-xs uppercase tracking-wider text-sand block mb-2">Full name</label>
-          <input
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full bg-transparent border border-hairline px-3 py-3 text-sm focus:outline-none focus:border-wineLight"
-          />
+      {searchParams.error && (
+        <div className="max-w-lg border border-wineLight text-wineLight text-sm px-4 py-3 mb-6">
+          ShipMozo said: {searchParams.error}
         </div>
-        <div>
-          <label className="font-mono text-xs uppercase tracking-wider text-sand block mb-2">Email</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-transparent border border-hairline px-3 py-3 text-sm focus:outline-none focus:border-wineLight"
-          />
-        </div>
-        <div>
-          <label className="font-mono text-xs uppercase tracking-wider text-sand block mb-2">Password</label>
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-transparent border border-hairline px-3 py-3 text-sm focus:outline-none focus:border-wineLight"
-          />
-        </div>
-        {error && <p className="text-wineLight text-xs">{error}</p>}
-        <button
-          disabled={loading}
-          className="w-full bg-wine hover:bg-wineDeep py-3.5 text-sm tracking-wide disabled:opacity-60"
-        >
-          {loading ? "Creating…" : "Create account"}
-        </button>
-      </form>
+      )}
 
-      <p className="text-sand text-sm mt-6">
-        Already have an account? <Link href="/login" className="underline">Sign in</Link>
-      </p>
+      {searchParams.warehouse_id ? (
+        <div className="max-w-lg">
+          <div className="border border-wineLight text-wineLight text-sm px-4 py-3 mb-6">
+            Warehouse created successfully.
+          </div>
+          <p className="text-sm text-sand mb-2">Your warehouse ID is:</p>
+          <div className="font-mono text-lg bg-bgElev px-4 py-3 mb-6 select-all">
+            {searchParams.warehouse_id}
+          </div>
+          <p className="text-sm text-sand leading-relaxed">
+            Copy this value, then add it in Vercel → Settings → Environment Variables as{" "}
+            <code className="text-bone">SHIPMOZO_WAREHOUSE_ID</code>, and redeploy.
+          </p>
+        </div>
+      ) : (
+        <div className="max-w-lg">
+          <p className="text-sm text-sand leading-relaxed mb-6">
+            This creates your pickup warehouse in ShipMozo using the address on file (Bagayam,
+            Vellore). Click once — running it again will just return the same warehouse instead
+            of creating a duplicate.
+          </p>
+          <form action={setupWarehouse}>
+            <button className="bg-wine hover:bg-wineDeep px-8 py-3 text-sm tracking-wide">
+              Create warehouse in ShipMozo
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

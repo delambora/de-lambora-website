@@ -1,56 +1,104 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
+
+const CATEGORY_LINKS = [
+  { href: "/collections/new", label: "New" },
+  { href: "/collections/shirts", label: "Shirts" },
+  { href: "/collections/tees", label: "Tees" },
+  { href: "/collections/polos", label: "Polos" },
+  { href: "/collections/sweatshirts", label: "Sweatshirts" },
+  { href: "/collections/hoodies", label: "Hoodies" },
+  { href: "/collections/bogo", label: "Buy 1 Get 1" },
+  { href: "/collections/premium", label: "Premium" },
+  { href: "/collections/sale", label: "Sale" }
+];
 
 export default function Navbar() {
   const { items } = useCart();
   const count = items.reduce((sum, i) => sum + i.qty, 0);
-
-  const marqueeText =
-    "Free shipping over ₹3000 · COD available · New drop: SS26 · 7-day easy returns · ";
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-bg/90 backdrop-blur border-b border-hairline">
-      {/* Scrolling marquee strip */}
-      <div className="overflow-hidden py-2 border-b border-hairline">
-        <div className="marquee-track flex whitespace-nowrap font-mono text-xs tracking-wide text-sand">
-          <span className="px-4">{marqueeText.repeat(4)}</span>
-          <span className="px-4" aria-hidden="true">{marqueeText.repeat(4)}</span>
-        </div>
-      </div>
+    <nav className="sticky top-0 z-50 bg-bg/95 backdrop-blur border-b border-hairline">
+      <div className="grid grid-cols-3 items-center px-4 sm:px-6 md:px-12 py-3 md:py-6">
+        {/* Left: hamburger on mobile, Account/Bag on desktop */}
+        <div className="flex items-center">
+          <button onClick={() => setMenuOpen((v) => !v)} className="md:hidden text-bone" aria-label="Menu">
+            {menuOpen ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M5 5l14 14M19 5L5 19" />
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            )}
+          </button>
 
-      <div className="grid grid-cols-3 items-center px-12 py-5">
-        <div className="flex items-center gap-6 text-sm">
-          <Link href="/account" className="hover:text-wineLight">Account</Link>
-          <Link href="/cart" className="hover:text-wineLight">
-            Bag
+          <div className="hidden md:flex items-center gap-7 text-xs tracking-wide text-sand">
+            <Link href="/account" className="hover:text-bone transition-colors">Log in / Sign up</Link>
+          </div>
+        </div>
+
+        {/* Center: logo — noticeably smaller on mobile so it never crowds the header */}
+        <Link
+          href="/"
+          className="font-serif tracking-[0.06em] text-center text-sm sm:text-base md:text-lg leading-none whitespace-nowrap"
+        >
+          DE LAMBORA
+        </Link>
+
+        {/* Right: bag icon, always visible */}
+        <div className="flex justify-end">
+          <Link href="/cart" className="relative flex items-center gap-2 text-bone" aria-label="Bag">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+              <circle cx="9" cy="20" r="1" />
+              <circle cx="20" cy="20" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+            <span className="hidden md:inline text-xs">Bag</span>
             {count > 0 && (
-              <span className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-wine text-[10px] font-mono">
+              <span className="absolute -top-2 -right-2 md:static inline-flex items-center justify-center w-4 h-4 rounded-full bg-wine text-[10px] font-mono text-bg">
                 {count}
               </span>
             )}
           </Link>
         </div>
-
-        <Link href="/" className="font-serif text-xl tracking-wide text-center">
-          DE LAMBORA
-        </Link>
-
-        <div />
       </div>
 
-      <div className="hidden md:flex justify-center gap-8 text-sm text-sand pb-4">
-        <Link href="/collections/new" className="hover:text-bone">New</Link>
-        <Link href="/collections/shirts" className="hover:text-bone">Shirts</Link>
-        <Link href="/collections/tees" className="hover:text-bone">Tees</Link>
-        <Link href="/collections/polos" className="hover:text-bone">Polos</Link>
-        <Link href="/collections/sweatshirts" className="hover:text-bone">Sweatshirts</Link>
-        <Link href="/collections/hoodies" className="hover:text-bone">Hoodies</Link>
-        <Link href="/collections/bogo" className="hover:text-bone text-wineLight">BOGO</Link>
-        <Link href="/collections/premium" className="hover:text-bone">Premium</Link>
-        <Link href="/collections/sale" className="hover:text-bone text-wineLight">Sale</Link>
+      {/* Desktop category row */}
+      <div className="hidden md:flex justify-center gap-9 text-xs tracking-wide text-sand pb-5">
+        {CATEGORY_LINKS.map((link) => (
+          <Link key={link.href} href={link.href} className="hover:text-bone transition-colors">
+            {link.label}
+          </Link>
+        ))}
       </div>
+
+      {/* Mobile menu panel */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-hairline px-5 py-6">
+          <div className="flex flex-col gap-5">
+            <Link href="/account" onClick={() => setMenuOpen(false)} className="text-sm text-sand hover:text-bone">
+              Log in / Sign up
+            </Link>
+            <div className="border-t border-hairline my-1" />
+            {CATEGORY_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="text-sm text-sand hover:text-bone"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

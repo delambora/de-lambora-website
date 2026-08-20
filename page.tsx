@@ -1,78 +1,94 @@
-"use client";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { approveManualOrder, rejectManualOrder } from "./manual-orders-actions";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+export const dynamic = "force-dynamic";
 
-export default function AccountPage() {
-  const supabase = createClient();
-  const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function ManualOrdersPage() {
+  const admin = createAdminClient();
 
-  useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) {
-        router.push("/login?next=/account");
-        return;
-      }
-      setUser(data.user);
+  const { data: orders } = await admin
+    .from("orders")
+    .select("*, order_items(*)")
+    .eq("payment_method", "manual")
+    .order("created_at", { ascending: false });
 
-      const { data: orderData } = await supabase
-        .from("orders")
-        .select("*, order_items(*)")
-        .order("created_at", { ascending: false });
+  const pending = (orders ?? []).filter((o: any) => o.verification_status === "pending");
+  const reviewed = (orders ?? []).filter((o: any) => o.verification_status !== "pending");
 
-      setOrders(orderData ?? []);
-      setLoading(false);
-    });
-  }, []);
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
+  async function signedProofUrl(path: string | null) {
+    if (!path) return null;
+    const { data } = await admin.storage.from("payment-proofs").createSignedUrl(path, 3600);
+    return data?.signedUrl ?? null;
   }
 
-  if (loading) return null;
-
   return (
-    <div className="px-12 py-16 max-w-2xl">
-      <div className="flex items-center justify-between mb-10">
-        <div>
-          <div className="eyebrow mb-2">Account</div>
-          <h1 className="font-serif text-3xl font-light">{user?.user_metadata?.full_name || user?.email}</h1>
-        </div>
-        <button onClick={handleLogout} className="text-xs font-mono text-sand hover:text-wineLight">
-          Sign out
-        </button>
+    <div>
+      <h1 className="font-serif text-3xl font-light mb-8">Manual payment orders</h1>
+
+      <h2 className="eyebrow mb-4">Awaiting verification ({pending.length})</h2>
+      <div className="space-y-6 mb-14">
+        {pending.length === 0 && <p className="text-sand text-sm">Nothing pending.</p>}
+        {await Promise.all(
+          pending.map(async (order: any) => {
+            const proofUrl = await signedProofUrl(order.payment_proof_url);
+            return (
+              <div key={order.id} className="border border-hairline p-5 grid md:grid-cols-[200px_1fr] gap-5">
+                <div>
+                  {proofUrl ? (
+                    <img src={proofUrl} className="w-full aspect-square object-cover border border-hairline" />
+                  ) : (
+                    <div className="w-full aspect-square border border-hairline flex items-center justify-center text-xs text-sand">
+                      No screenshot
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                    <div><span className="text-sand">Order total:</span> ₹{Number(order.total).toLocaleString("en-IN")}</div>
+                    <div><span className="text-sand">Sender name:</span> {order.payer_name || "—"}</div>
+                    <div><span className="text-sand">Payment time:</span> {order.payment_time || "—"}</div>
+                    <div><span className="text-sand">Ordered:</span> {new Date(order.created_at).toLocaleString("en-IN")}</div>
+                  </div>
+                  <div className="text-sm text-sand mb-4">
+                    Ship to: {order.full_name}, {order.address_line1}, {order.city}, {order.state} {order.pincode} · {order.phone}
+                  </div>
+                  <div className="text-xs text-sand mb-4">
+                    {order.order_items?.map((item: any) => (
+                      <div key={item.id}>{item.product_name} ({item.color}, {item.size}) × {item.qty}</div>
+                    ))}
+                  </div>
+                  <div className="flex gap-3">
+                    <form action={approveManualOrder}>
+                      <input type="hidden" name="orderId" value={order.id} />
+                      <button className="bg-wine hover:bg-wineDeep px-5 py-2 text-xs tracking-wide">
+                        Approve & Ship
+                      </button>
+                    </form>
+                    <form action={rejectManualOrder}>
+                      <input type="hidden" name="orderId" value={order.id} />
+                      <button className="border border-hairline px-5 py-2 text-xs tracking-wide text-sand hover:text-wineLight">
+                        Reject
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
-      <h2 className="font-serif text-xl font-light mb-5">Order history</h2>
-
-      {orders.length === 0 && <p className="text-sand text-sm">No orders yet.</p>}
-
-      {orders.map((order) => (
-        <div key={order.id} className="border-b border-hairline py-5">
-          <div className="flex justify-between text-sm mb-3">
-            <span className="font-mono text-sand">
-              {new Date(order.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+      <h2 className="eyebrow mb-4">Reviewed</h2>
+      <div className="space-y-2">
+        {reviewed.map((order: any) => (
+          <div key={order.id} className="flex justify-between text-sm border-b border-hairline py-3">
+            <span>{order.full_name} · ₹{Number(order.total).toLocaleString("en-IN")}</span>
+            <span className={order.verification_status === "approved" ? "text-wineLight" : "text-sand"}>
+              {order.verification_status}
             </span>
-            <span className="font-mono uppercase text-xs text-sand">{order.status}</span>
           </div>
-          {order.order_items?.map((item: any) => (
-            <div key={item.id} className="flex justify-between text-sm py-1">
-              <span>{item.product_name} <span className="text-sand">({item.color}, {item.size}) × {item.qty}</span></span>
-              <span className="font-mono">₹{Number(item.price * item.qty).toLocaleString("en-IN")}</span>
-            </div>
-          ))}
-          <div className="flex justify-between text-sm font-mono mt-3 pt-3 border-t border-hairline">
-            <span>Total</span>
-            <span>₹{Number(order.total).toLocaleString("en-IN")}</span>
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
