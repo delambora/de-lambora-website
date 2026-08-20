@@ -29,6 +29,12 @@ export default async function HomePage() {
     .eq("key", "homepage_categories")
     .single();
 
+  const { data: copyData } = await supabase
+    .from("site_content")
+    .select("value")
+    .eq("key", "homepage_copy")
+    .single();
+
   const hero = heroData?.value ?? {
     headline_line1: "Tailored for",
     headline_emphasis: "the unhurried.",
@@ -59,6 +65,17 @@ export default async function HomePage() {
       link: "/collections/premium",
       image_url: "",
     },
+  };
+
+  const copy = {
+    hero_eyebrow: "SS26 — Collection No. 04",
+    category_eyebrow: "Shop by category",
+    category_title: "Find your fit",
+    just_in_eyebrow: "Just in",
+    just_in_title: "Latest arrivals",
+    explore_eyebrow: "Explore",
+    explore_title: "The collections",
+    ...((copyData?.value ?? {}) as any),
   };
 
   const savedCategories = categoryData?.value ?? {};
@@ -107,9 +124,7 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/0" />
 
           <div className="absolute inset-0 flex flex-col justify-end px-5 md:px-12 pb-12 md:pb-20 text-white">
-            <div className="eyebrow mb-3 text-white/75">
-              SS26 — Collection No. 04
-            </div>
+            <div className="eyebrow mb-3 text-white/75">{copy.hero_eyebrow}</div>
 
             <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-light leading-tight max-w-xl">
               {hero.headline_line1}
@@ -133,9 +148,7 @@ export default async function HomePage() {
         </section>
       ) : (
         <section className="px-5 md:px-12 pt-16 md:pt-28 pb-10 md:pb-16">
-          <div className="eyebrow mb-3 md:mb-4">
-            SS26 — Collection No. 04
-          </div>
+          <div className="eyebrow mb-3 md:mb-4">{copy.hero_eyebrow}</div>
 
           <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-light leading-tight max-w-xl">
             {hero.headline_line1}
@@ -160,61 +173,22 @@ export default async function HomePage() {
 
       {/* SHOP BY CATEGORY */}
       <FadeIn>
-        <section className="px-5 md:px-12 pt-16 md:pt-28 pb-16 md:pb-24">
-          <div className="eyebrow mb-2">
-            Shop by category
-          </div>
-
-          <h2 className="font-serif text-xl md:text-2xl font-light mb-8 md:mb-10">
-            Find your fit
-          </h2>
-
-          {/* 
-            This remains your existing product-based
-            Shop by Category section.
-          */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
-            {[
-              { slug: "hoodies", label: "Hoodies" },
-              { slug: "sweatshirts", label: "Sweatshirts" },
-              { slug: "tees", label: "Tees" },
-              { slug: "polos", label: "Polos" },
-            ].map((cat) => {
-              const match = productList.find(
-                (p) =>
-                  p.category?.toLowerCase() ===
-                    cat.slug.replace(/s$/, "") ||
-                  p.category?.toLowerCase() === cat.slug
-              );
-
-              const img = match?.images?.[0] || null;
-
-              return (
-                <Link
-                  key={cat.slug}
-                  href={`/collections/${cat.slug}`}
-                  className="group block"
-                >
-                  <div className="aspect-[4/5] mb-3 overflow-hidden bg-bgElev">
-                    {img ? (
-                      <img
-                        src={img}
-                        alt={cat.label}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sand text-xs font-mono">
-                        {cat.label}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="text-sm tracking-wide">
-                    {cat.label}
-                  </div>
-                </Link>
-              );
-            })}
+        <section className="px-5 md:px-12 pt-12 md:pt-20 pb-14 md:pb-20">
+          <div className="eyebrow mb-2">{copy.category_eyebrow}</div>
+          <h2 className="font-serif text-xl md:text-2xl font-light mb-7 md:mb-10">{copy.category_title}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-5">
+            {categories.map((category, index) => (
+              <Link key={index} href={category.link || "#"} className="group relative aspect-[4/5] overflow-hidden bg-bgElev">
+                {category.image_url ? (
+                  <img src={category.image_url} alt={category.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                ) : <div className="absolute inset-0 bg-bgElev" />}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-5 md:p-7 text-white">
+                  <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">{category.eyebrow}</p>
+                  <h3 className="font-serif text-2xl md:text-3xl font-light">{category.title}</h3>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       </FadeIn>
@@ -223,13 +197,9 @@ export default async function HomePage() {
       <FadeIn>
         <section id="new-arrivals" className="pb-16 md:pb-24">
           <div className="px-5 md:px-12">
-            <div className="eyebrow mb-2">
-              Just in
-            </div>
+            <div className="eyebrow mb-2">{copy.just_in_eyebrow}</div>
 
-            <h2 className="font-serif text-xl md:text-2xl font-light mb-8 md:mb-10">
-              Latest arrivals
-            </h2>
+            <h2 className="font-serif text-xl md:text-2xl font-light mb-8 md:mb-10">{copy.just_in_title}</h2>
           </div>
 
           {productList.length > 0 ? (
@@ -254,60 +224,6 @@ export default async function HomePage() {
       {/* NEW DROP / PROMO BANNER */}
       <FadeIn>
         <PromoBanner />
-      </FadeIn>
-
-      {/* FEATURED COLLECTIONS */}
-      <FadeIn>
-        <section className="px-5 md:px-12 py-16 md:py-24">
-          <div className="text-center mb-10 md:mb-14">
-            <div className="eyebrow mb-3">
-              Explore
-            </div>
-
-            <h2 className="font-serif text-2xl md:text-3xl font-light">
-              The collections
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {categories.map((category, index) => (
-              <Link
-                key={index}
-                href={category.link || "#"}
-                className="group relative aspect-[4/5] overflow-hidden bg-bgElev"
-              >
-                {/* IMAGE */}
-                {category.image_url ? (
-                  <img
-                    src={category.image_url}
-                    alt={category.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-bgElev" />
-                )}
-
-                {/* DARK GRADIENT */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent z-[1]" />
-
-                {/* TEXT */}
-                <div className="absolute inset-0 flex items-end p-6 md:p-8 z-10">
-                  <div>
-                    {category.eyebrow && (
-                      <p className="text-white/65 text-[10px] uppercase tracking-[0.25em] mb-2">
-                        {category.eyebrow}
-                      </p>
-                    )}
-
-                    <h3 className="font-serif text-2xl md:text-3xl text-white font-light">
-                      {category.title}
-                    </h3>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
       </FadeIn>
 
       {/* HERO 2 */}
