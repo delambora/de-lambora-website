@@ -6,44 +6,65 @@ import { CartProvider } from "@/lib/cart-context";
 
 export const metadata: Metadata = {
   title: {
-    default: "De Lambora — Contemporary Clothing",
+    default: "De Lambora — Considered Clothing",
     template: "%s — De Lambora",
   },
+
   description:
-    "De Lambora — considered clothing made with intention. Explore our latest shirts, t-shirts, premium essentials and new collections.",
+    "De Lambora creates considered everyday clothing with a focus on quality, comfort and timeless design.",
+
   keywords: [
     "De Lambora",
-    "De Lambora clothing",
-    "men's clothing",
+    "DeLambora",
+    "clothing",
+    "fashion",
     "shirts",
     "t-shirts",
+    "polos",
+    "hoodies",
     "premium clothing",
     "Indian clothing brand",
   ],
-  authors: [{ name: "De Lambora" }],
+
+  authors: [
+    {
+      name: "De Lambora",
+    },
+  ],
+
   creator: "De Lambora",
   publisher: "De Lambora",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://delambora.com"
-  ),
+
+  metadataBase: new URL("https://delambora.com"),
+
+  alternates: {
+    canonical: "/",
+  },
+
   openGraph: {
-    title: "De Lambora — Contemporary Clothing",
-    description:
-      "Considered clothing made with intention. Explore De Lambora.",
-    url: "https://delambora.com",
-    siteName: "De Lambora",
     type: "website",
     locale: "en_IN",
+    url: "https://delambora.com",
+    siteName: "De Lambora",
+    title: "De Lambora — Considered Clothing",
+    description:
+      "Considered everyday clothing designed with intention and made to be worn.",
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "De Lambora — Contemporary Clothing",
+    title: "De Lambora — Considered Clothing",
     description:
-      "Considered clothing made with intention. Explore De Lambora.",
+      "Considered everyday clothing designed with intention and made to be worn.",
   },
+
   robots: {
     index: true,
     follow: true,
+  },
+
+  icons: {
+    icon: "/favicon.ico",
   },
 };
 
@@ -54,10 +75,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-bg text-bone antialiased">
+      <body>
         <CartProvider>
           <Navbar />
-          {children}
+
+          <main>{children}</main>
+
           <Footer />
         </CartProvider>
       </body>
